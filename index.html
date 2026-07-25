@@ -1,529 +1,567 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="bn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juniper Multi-Service Premium Dashboard</title>
-    <style>
-        /* High-End UX Design Tokens */
-        :root[data-theme="light"] {
-            --bg-gradient: linear-gradient(-45deg, #f1f5f9, #e2e8f0, #eef2f6, #f8fafc);
-            --bg-card: rgba(255, 255, 255, 0.9);
-            --bg-input: #ffffff;
-            --bg-accent: #f1f5f9;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border-color: #cbd5e1;
-            --primary: #0284c7;
-            --primary-glow: rgba(2, 132, 199, 0.15);
-            --tab-active-bg: #0284c7;
-            --tab-active-text: #ffffff;
-            --code-bg: #0f172a;
-            --code-text: #38bdf8;
-            --copy-btn-bg: #10b981;
-            --copy-btn-hover: #059669;
-        }
-
-        :root[data-theme="dark"] {
-            --bg-gradient: linear-gradient(-45deg, #070b14, #0b0f19, #111827, #090d16);
-            --bg-card: rgba(21, 32, 54, 0.85);
-            --bg-input: #090e1a;
-            --bg-accent: #1e2942;
-            --text-main: #f1f5f9;
-            --text-muted: #94a3b8;
-            --border-color: #24304f;
-            --primary: #38bdf8;
-            --primary-glow: rgba(56, 189, 248, 0.2);
-            --tab-active-bg: #0284c7;
-            --tab-active-text: #ffffff;
-            --code-bg: #070b14;
-            --code-text: #34d399;
-            --copy-btn-bg: #10b981;
-            --copy-btn-hover: #059669;
-        }
-
-        * {
-            box-sizing: border-box;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        }
-
-        body {
-            background: var(--bg-gradient);
-            background-size: 400% 400%;
-            color: var(--text-main);
-            margin: 0;
-            padding: 20px;
-            animation: gradientBG 20s ease infinite;
-            backdrop-filter: blur(8px);
-        }
-
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .container {
-            max-width: 1550px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* Top Header Navigation */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--bg-card);
-            padding: 15px 25px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            backdrop-filter: blur(10px);
-        }
-
-        .navbar h1 {
-            font-size: 20px;
-            font-weight: 700;
-            margin: 0;
-            background: linear-gradient(to right, #38bdf8, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .theme-btn {
-            background: var(--bg-accent);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-            padding: 8px 16px;
-            cursor: pointer;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 13px;
-            transition: border-color 0.2s ease;
-        }
-        .theme-btn:hover {
-            border-color: var(--primary);
-        }
-
-        /* Structural Glassmorphism Cards */
-        .card {
-            background-color: var(--bg-card);
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            padding: 22px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
-        }
-
-        .section-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--primary);
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-        }
-
-        /* Layout Grids */
-        .grid-inputs {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
-        }
-
-        /* 3-Column Grid Layout for Gateways Section */
-        .services-grid-box {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-        }
-
-        @media (max-width: 900px) {
-            .services-grid-box {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        @media (max-width: 600px) {
-            .services-grid-box {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .service-row-card {
-            background: var(--bg-accent);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 15px;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-        .service-row-card:hover {
-            border-color: var(--primary);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        .service-name-tag {
-            font-size: 13px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            color: var(--text-main);
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 6px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-bottom: 12px;
-        }
-
-        .form-group:last-child {
-            margin-bottom: 0;
-        }
-
-        label {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Premium Input States */
-        input, textarea {
-            width: 100%;
-            padding: 8px 12px;
-            background-color: var(--bg-input);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 13px;
-            transition: border-color 0.15s ease, box-shadow 0.15s ease;
-        }
-
-        input:focus, textarea:focus {
-            border-color: var(--primary);
-            outline: none;
-            box-shadow: 0 0 0 3px var(--primary-glow);
-        }
-
-        textarea {
-            resize: vertical;
-            height: 75px;
-            font-family: monospace;
-        }
-
-        /* Tabs UI Architecture */
-        .tabs-header {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 12px;
-        }
-
-        .tab-button {
-            background: var(--bg-accent);
-            color: var(--text-muted);
-            border: 1px solid var(--border-color);
-            padding: 10px 20px;
-            font-size: 13px;
-            font-weight: 600;
-            border-radius: 6px;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.15s ease;
-        }
-        .tab-button:hover {
-            color: var(--text-main);
-            background: var(--border-color);
-        }
-
-        .tab-button.active {
-            background-color: var(--tab-active-bg);
-            color: var(--tab-active-text);
-            border-color: var(--tab-active-bg);
-        }
-
-        .output-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 5px;
-        }
-
-        .status-indicator {
-            font-size: 13px;
-            font-weight: 600;
-            color: #34d399;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .copy-btn {
-            background-color: var(--copy-btn-bg);
-            color: #ffffff;
-            border: none;
-            padding: 8px 18px;
-            font-size: 13px;
-            font-weight: 700;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.15s ease;
-        }
-
-        .copy-btn:hover {
-            background-color: var(--copy-btn-hover);
-        }
-
-        /* High-Definition Raw Code Display */
-        .code-container {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
-
-        pre {
-            background-color: var(--code-bg);
-            color: var(--code-text);
-            padding: 18px;
-            border-radius: 8px;
-            overflow: auto;
-            font-family: 'Fira Code', 'Consolas', monospace;
-            font-size: 13px;
-            line-height: 1.6;
-            margin: 0;
-            min-height: 350px;
-            max-height: 600px;
-            border: 1px solid var(--border-color);
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Juniper Engine v3.0</title>
+<style>
+  :root{
+    --bg:#0a1120;
+    --panel:#111a2e;
+    --panel-2:#0c1424;
+    --border:#1e2a45;
+    --text:#e6ebf5;
+    --muted:#7b88a8;
+    --label:#8493b3;
+    --accent:#4fb3f5;
+    --accent-2:#7dd3fc;
+    --code:#7ee787;
+    --code-2:#79c0ff;
+    --green-dot:#3fb950;
+    --btn-bg:#16213a;
+    --btn-border:#28395c;
+    --input-bg:#0a1223;
+    --shadow: 0 1px 0 rgba(255,255,255,0.02) inset;
+    --amber:#e3b341;
+    --purple:#c297ff;
+    --pink:#ff9ac2;
+    --danger:#f85149;
+    --track:#1a2340;
+  }
+  [data-theme="light"]{
+    --bg:#eef1f7;
+    --panel:#ffffff;
+    --panel-2:#f4f6fb;
+    --border:#dbe2f0;
+    --text:#1b2436;
+    --muted:#64708a;
+    --label:#57627e;
+    --accent:#1d7fc4;
+    --accent-2:#0f6bab;
+    --code:#0a7d3a;
+    --code-2:#0757b3;
+    --green-dot:#1a9c46;
+    --btn-bg:#eef2fa;
+    --btn-border:#c8d3e8;
+    --input-bg:#ffffff;
+    --amber:#b3790a;
+    --purple:#7a3fd6;
+    --pink:#c23b78;
+    --danger:#c62828;
+    --track:#e3e9f5;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    padding-bottom:60px;
+  }
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 28px;
+    border-bottom:1px solid var(--border);
+    background:var(--panel);
+    flex-wrap:wrap;
+    gap:12px;
+  }
+  .header-left{display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+  header h1{
+    font-size:19px;margin:0;color:var(--accent);
+    letter-spacing:0.2px;
+  }
+  .stats{display:flex;gap:10px;flex-wrap:wrap;}
+  .stat-pill{
+    display:flex;align-items:center;gap:7px;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:12px;
+    color:var(--muted);
+  }
+  .stat-pill b{color:var(--text);font-weight:600;}
+  .stat-pill .dot-sm{width:6px;height:6px;border-radius:50%;background:var(--green-dot);display:inline-block;}
+  .theme-btn{
+    background:var(--btn-bg);
+    border:1px solid var(--btn-border);
+    color:var(--text);
+    padding:8px 14px;
+    border-radius:8px;
+    font-size:13px;
+    cursor:pointer;
+  }
+  .wrap{max-width:1200px;margin:0 auto;padding:24px;}
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:20px 22px;
+    margin-bottom:22px;
+  }
+  .card h2{
+    font-size:15px;
+    color:var(--accent-2);
+    margin:0 0 14px 0;
+    display:flex;align-items:center;gap:8px;
+    border-bottom:1px solid var(--border);
+    padding-bottom:12px;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+    gap:16px;
+  }
+  label.field{display:flex;flex-direction:column;gap:6px;}
+  label.field span{
+    font-size:11px;letter-spacing:0.06em;
+    color:var(--label);text-transform:uppercase;
+  }
+  input, textarea, select{
+    background:var(--input-bg);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:9px 11px;
+    border-radius:8px;
+    font-size:13.5px;
+    font-family:inherit;
+    width:100%;
+  }
+  input:focus, textarea:focus{
+    outline:none;border-color:var(--accent);
+  }
+  .gw-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+  }
+  @media (max-width:860px){
+    .gw-grid{grid-template-columns:repeat(2,1fr);}
+  }
+  @media (max-width:560px){
+    .gw-grid{grid-template-columns:1fr;}
+  }
+  .gw-card{
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    border-left:3px solid var(--gw-accent, var(--accent));
+    border-radius:10px;
+    padding:16px;
+  }
+  .gw-card .gw-head{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:12px;
+  }
+  .gw-card h3{
+    margin:0;font-size:14px;color:var(--text);
+  }
+  .bw-badge{
+    font-size:11px;font-weight:700;
+    color:var(--gw-accent, var(--accent));
+    background:color-mix(in srgb, var(--gw-accent, var(--accent)) 16%, transparent);
+    padding:3px 8px;border-radius:6px;
+    font-family:"SF Mono",Consolas,Menlo,monospace;
+  }
+  .bw-bar-track{
+    height:5px;border-radius:3px;background:var(--track);
+    overflow:hidden;margin-bottom:14px;
+  }
+  .bw-bar-fill{
+    height:100%;border-radius:3px;
+    background:var(--gw-accent, var(--accent));
+    transition:width .25s ease;
+  }
+  .gw-card .field{margin-bottom:12px;}
+  .gw-card .field:last-child{margin-bottom:0;}
+  .rf-wrap{
+    display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;
+    background:var(--input-bg);
+  }
+  .rf-gutter{
+    padding:9px 10px;
+    background:var(--panel-2);
+    color:var(--muted);
+    font-family:"SF Mono",Consolas,Menlo,monospace;
+    font-size:13px;line-height:1.5;
+    text-align:right;
+    user-select:none;
+    overflow:hidden;
+    border-right:1px solid var(--border);
+    white-space:pre;
+  }
+  textarea#routeFilters{
+    min-height:90px;font-family:"SF Mono",Consolas,Menlo,monospace;
+    resize:vertical;border:none;border-radius:0;
+    line-height:1.5;flex:1;
+  }
+  textarea#routeFilters:focus{outline:none;}
+  .rf-status{
+    margin-top:8px;display:flex;flex-direction:column;gap:3px;
+    font-family:"SF Mono",Consolas,Menlo,monospace;font-size:11.5px;
+  }
+  .rf-status .ok{color:var(--green-dot);}
+  .rf-status .bad{color:var(--danger);}
+  .tabs{
+    display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;
+    padding-bottom:14px;
+    border-bottom:1px solid var(--border);
+  }
+  .tab-btn{
+    background:var(--btn-bg);
+    border:1px solid var(--btn-border);
+    color:var(--muted);
+    padding:8px 15px;
+    border-radius:20px;
+    font-size:12.5px;
+    cursor:pointer;
+    transition:background .15s, color .15s, border-color .15s;
+  }
+  .tab-btn:hover{color:var(--text);border-color:var(--accent);}
+  .tab-btn.active{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#031321;
+    font-weight:600;
+  }
+  .out-header{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:10px;
+  }
+  .out-title{
+    display:flex;align-items:center;gap:8px;
+    font-size:13px;color:#4dd07a;
+  }
+  .dot{
+    width:8px;height:8px;border-radius:50%;background:var(--green-dot);
+    display:inline-block;
+  }
+  .copy-btn{
+    background:#0d7a4f;
+    border:1px solid #0d7a4f;
+    color:#fff;
+    padding:8px 18px;
+    border-radius:8px;
+    font-size:12.5px;
+    cursor:pointer;
+    font-weight:600;
+    display:flex;align-items:center;gap:6px;
+    transition:background .15s, border-color .15s, transform .1s;
+  }
+  .copy-btn:active{transform:scale(0.97);}
+  .copy-btn.copied{background:#1d7fc4;border-color:#1d7fc4;}
+  pre#codeOut{
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:18px 20px;
+    font-family:"SF Mono",Consolas,Menlo,monospace;
+    font-size:13px;
+    line-height:1.65;
+    color:var(--code);
+    overflow-x:auto;
+    white-space:pre;
+    margin:0;
+  }
+  pre#codeOut .kw{color:var(--code-2);}
+  pre#codeOut .ip{color:var(--amber);}
+  pre#codeOut .bw{color:var(--pink);font-weight:600;}
+  pre#codeOut .num{color:var(--purple);}
+  .hint{
+    font-size:12px;color:var(--muted);margin:10px 2px 0 2px;
+  }
+</style>
 </head>
-<body>
+<body data-theme="dark">
 
-<div class="container">
-    <div class="navbar">
-        <h1>Juniper Engine v3.0</h1>
-        <button class="theme-btn" onclick="toggleTheme()" id="themeToggleBtn">☀️ Light Mode</button>
+<header>
+  <div class="header-left">
+    <h1>Juniper Engine v3.0</h1>
+    <div class="stats">
+      <span class="stat-pill"><span class="dot-sm"></span><b id="statActive">6</b>&nbsp;Gateways Active</span>
+      <span class="stat-pill">Total Bandwidth: <b id="statBw">&nbsp;2.4G</b></span>
     </div>
+  </div>
+  <button class="theme-btn" id="themeToggle">☀️ Light Mode</button>
+</header>
 
-    <div class="card">
-        <h2 class="section-title">🌐 Global Nodes</h2>
-        <div class="grid-inputs">
-            <div class="form-group">
-                <label>Interface</label>
-                <input type="text" id="interface" value="ae0" oninput="generateAll()">
-            </div>
-            <div class="form-group">
-                <label>PoP Location Suffix</label>
-                <input type="text" id="pop_name" value="Narayanganj-Madanganj-PoP" oninput="generateAll()">
-            </div>
-            <div class="form-group">
-                <label>Peer AS</label>
-                <input type="number" id="peer_as" value="65008" oninput="generateAll()">
-            </div>
-            <div class="form-group">
-                <label>Local AS</label>
-                <input type="number" id="local_as" value="136141" oninput="generateAll()">
-            </div>
-            <div class="form-group">
-                <label>Burst Limit</label>
-                <input type="text" id="burst_limit" value="5m" oninput="generateAll()">
-            </div>
-        </div>
+<div class="wrap">
+
+  <div class="card">
+    <h2>🌐 Global Nodes</h2>
+    <div class="grid">
+      <label class="field"><span>Interface</span><input id="g_iface" value="ae0"></label>
+      <label class="field"><span>POP Location Suffix</span><input id="g_suffix" value="Relation-cable-kurigram"></label>
+      <label class="field"><span>Peer AS</span><input id="g_peeras" value="65001"></label>
+      <label class="field"><span>Local AS</span><input id="g_localas" value="136141"></label>
+      <label class="field"><span>Burst Limit</span><input id="g_burst" value="5m"></label>
     </div>
+  </div>
 
-    <div class="card">
-        <h2 class="section-title">🛠️ Gateways & Service Vectors</h2>
-        <div class="services-grid-box">
-            <div class="service-row-card">
-                <div class="service-name-tag">1. IIG Gateway</div>
-                <div class="form-group"><label>Unit</label><input type="number" id="iig_unit" value="1751" oninput="generateAll()"></div>
-                <div class="form-group"><label>Bandwidth</label><input type="text" id="iig_bw" value="140m" oninput="generateAll()"></div>
-                <div class="form-group"><label>Logical Sys</label><input type="text" id="iig_ls" value="" placeholder="None" oninput="generateAll()"></div>
-                <div class="form-group"><label>Neighbor IP</label><input type="text" id="iig_neighbor" value="10.1.155.58" oninput="generateAll()"></div>
-            </div>
-            <div class="service-row-card">
-                <div class="service-name-tag">2. GGC Gateway</div>
-                <div class="form-group"><label>Unit</label><input type="number" id="ggc_unit" value="1752" oninput="generateAll()"></div>
-                <div class="form-group"><label>Bandwidth</label><input type="text" id="ggc_bw" value="900m" oninput="generateAll()"></div>
-                <div class="form-group"><label>Logical Sys</label><input type="text" id="ggc_ls" value="GGC-R1" oninput="generateAll()"></div>
-                <div class="form-group"><label>Neighbor IP</label><input type="text" id="ggc_neighbor" value="10.2.155.58" oninput="generateAll()"></div>
-            </div>
-            <div class="service-row-card">
-                <div class="service-name-tag">3. FNA Gateway</div>
-                <div class="form-group"><label>Unit</label><input type="number" id="fna_unit" value="1753" oninput="generateAll()"></div>
-                <div class="form-group"><label>Bandwidth</label><input type="text" id="fna_bw" value="550m" oninput="generateAll()"></div>
-                <div class="form-group"><label>Logical Sys</label><input type="text" id="fna_ls" value="FNA-R1" oninput="generateAll()"></div>
-                <div class="form-group"><label>Neighbor IP</label><input type="text" id="fna_neighbor" value="10.3.155.58" oninput="generateAll()"></div>
-            </div>
-            <div class="service-row-card">
-                <div class="service-name-tag">4. BDIX Gateway</div>
-                <div class="form-group"><label>Unit</label><input type="number" id="bdix_unit" value="1754" oninput="generateAll()"></div>
-                <div class="form-group"><label>Bandwidth</label><input type="text" id="bdix_bw" value="570m" oninput="generateAll()"></div>
-                <div class="form-group"><label>Logical Sys</label><input type="text" id="bdix_ls" value="BDIX-R1" oninput="generateAll()"></div>
-                <div class="form-group"><label>Neighbor IP</label><input type="text" id="bdix_neighbor" value="10.4.155.58" oninput="generateAll()"></div>
-            </div>
-            <div class="service-row-card">
-                <div class="service-name-tag">5. CDN Gateway</div>
-                <div class="form-group"><label>Unit</label><input type="number" id="cdn_unit" value="1755" oninput="generateAll()"></div>
-                <div class="form-group"><label>Bandwidth</label><input type="text" id="cdn_bw" value="40m" oninput="generateAll()"></div>
-                <div class="form-group"><label>Logical Sys</label><input type="text" id="cdn_ls" value="CDN-R1" oninput="generateAll()"></div>
-                <div class="form-group"><label>Neighbor IP</label><input type="text" id="cdn_neighbor" value="10.5.155.58" oninput="generateAll()"></div>
-            </div>
-            <div class="service-row-card">
-                <div class="service-name-tag">6. BCDN Gateway</div>
-                <div class="form-group"><label>Unit</label><input type="number" id="bcdn_unit" value="1756" oninput="generateAll()"></div>
-                <div class="form-group"><label>Bandwidth</label><input type="text" id="bcdn_bw" value="200m" oninput="generateAll()"></div>
-                <div class="form-group"><label>Logical Sys</label><input type="text" id="bcdn_ls" value="BCDN-R1" oninput="generateAll()"></div>
-                <div class="form-group"><label>Neighbor IP</label><input type="text" id="bcdn_neighbor" value="10.6.155.58" oninput="generateAll()"></div>
-            </div>
-        </div>
+  <div class="card">
+    <h2>🛠️ Gateways &amp; Service Vectors</h2>
+    <div class="gw-grid" id="gwGrid"></div>
 
-        <div class="form-group" style="margin-top: 5px;">
-            <label>Route Filter Injections</label>
-            <textarea id="routes" oninput="generateAll()">103.137.66.48/30 exact
-103.13.192.182/31 exact
-121.200.221.126/31 exact</textarea>
-        </div>
+    <div class="hint">Route Filter Injections (one per line, applied to every gateway's import policy)</div>
+    <div class="rf-wrap" style="margin-top:8px;">
+      <div class="rf-gutter" id="rfGutter">1
+2</div>
+      <textarea id="routeFilters" spellcheck="false">103.81.104.92/30 exact
+121.200.221.112/30 exact</textarea>
     </div>
+    <div class="rf-status" id="rfStatus"></div>
+  </div>
 
-    <div class="card">
-        <div class="tabs-header">
-            <button class="tab-button active" onclick="switchTab('IIG')">IIG Config</button>
-            <button class="tab-button" onclick="switchTab('GGC')">GGC Config</button>
-            <button class="tab-button" onclick="switchTab('FNA')">FNA Config</button>
-            <button class="tab-button" onclick="switchTab('BDIX')">BDIX Config</button>
-            <button class="tab-button" onclick="switchTab('CDN')">CDN Config</button>
-            <button class="tab-button" onclick="switchTab('BCDN')">BCDN Config</button>
-        </div>
-
-        <div class="output-meta">
-            <div class="status-indicator" id="activeProfileLabel">● IIG Raw Commands (Standard Context):</div>
-            <button class="copy-btn" onclick="copyCurrentTab()">Copy Code</button>
-        </div>
-
-        <div class="code-container">
-            <pre id="output">Compiling micro-scripts...</pre>
-        </div>
+  <div class="card">
+    <h2>📄 Generated Configuration</h2>
+    <div class="tabs" id="tabs"></div>
+    <div class="out-header">
+      <div class="out-title"><span class="dot"></span><span id="outLabel">IIG Raw Commands (Standard Context):</span></div>
+      <button class="copy-btn" id="copyBtn">Copy Code</button>
     </div>
+    <pre id="codeOut"></pre>
+  </div>
+
 </div>
 
 <script>
-    let activeServiceTab = 'IIG';
-    const storageCache = {};
+const GATEWAYS = [
+  {key:'iig',  label:'IIG',  short:'IIG',  unit:3528, bandwidth:'140m', logicalSys:'',          neighbor:'10.2.160.26',   accent:'#4fb3f5'},
+  {key:'ggc',  label:'GGC',  short:'GGC',  unit:3529, bandwidth:'900m', logicalSys:'GGC-R3',     neighbor:'172.19.101.26', accent:'#f5a742'},
+  {key:'fna',  label:'FNA',  short:'FNA',  unit:3530, bandwidth:'550m', logicalSys:'FNA-R3',     neighbor:'172.18.101.26', accent:'#7ee787'},
+  {key:'bdix', label:'BDIX', short:'BDIX', unit:3531, bandwidth:'570m', logicalSys:'BDIX-R2',    neighbor:'172.16.7.26',   accent:'#c297ff'},
+  {key:'cdn',  label:'CDN',  short:'CDN',  unit:3532, bandwidth:'40m',  logicalSys:'CDN-R2',     neighbor:'10.2.159.26',   accent:'#ff9ac2'},
+  {key:'bcdn', label:'BCDN', short:'BCDN', unit:3533, bandwidth:'200m', logicalSys:'BCDN-R2',    neighbor:'10.100.99.26',  accent:'#5eead4'},
+];
 
-    function toggleTheme() {
-        const root = document.documentElement;
-        const currentTheme = root.getAttribute('data-theme');
-        const btn = document.getElementById('themeToggleBtn');
-        if (currentTheme === 'dark') {
-            root.setAttribute('data-theme', 'light');
-            btn.textContent = "🌙 Dark Mode";
-        } else {
-            root.setAttribute('data-theme', 'dark');
-            btn.textContent = "☀️ Light Mode";
-        }
-    }
+function parseBw(str){
+  const m = String(str).trim().match(/^([\d.]+)\s*([kmg])?/i);
+  if (!m) return 0;
+  const val = parseFloat(m[1]);
+  const unit = (m[2] || 'm').toLowerCase();
+  if (unit === 'g') return val * 1000;
+  if (unit === 'k') return val / 1000;
+  return val;
+}
 
-    function switchTab(serviceName) {
-        activeServiceTab = serviceName;
-        
-        const buttons = document.querySelectorAll('.tab-button');
-        buttons.forEach(btn => {
-            if(btn.textContent.startsWith(serviceName)) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
-        });
+function formatBw(mbps){
+  if (mbps >= 1000) return (mbps/1000).toFixed(mbps % 1000 === 0 ? 0 : 1) + 'G';
+  return mbps.toFixed(mbps % 1 === 0 ? 0 : 1) + 'M';
+}
 
-        const lsValue = document.getElementById(`${serviceName.toLowerCase()}_ls`).value.trim();
-        const label = document.getElementById('activeProfileLabel');
-        if(lsValue) {
-            label.textContent = `● ${serviceName} Raw Commands (Logical System):`;
-            label.style.color = '#34d399';
-        } else {
-            label.textContent = `● ${serviceName} Raw Commands (Standard Context):`;
-            label.style.color = '#38bdf8';
-        }
+const gwGrid = document.getElementById('gwGrid');
+GATEWAYS.forEach((gw, i) => {
+  const card = document.createElement('div');
+  card.className = 'gw-card';
+  card.style.setProperty('--gw-accent', gw.accent);
+  card.dataset.gwKey = gw.key;
+  card.innerHTML = `
+    <div class="gw-head">
+      <h3>${i+1}. ${gw.label} Gateway</h3>
+      <span class="bw-badge" id="badge-${gw.key}">${gw.bandwidth}</span>
+    </div>
+    <div class="bw-bar-track"><div class="bw-bar-fill" id="bar-${gw.key}" style="width:0%"></div></div>
+    <label class="field"><span>Unit</span><input data-gw="${gw.key}" data-f="unit" value="${gw.unit}"></label>
+    <label class="field"><span>Bandwidth</span><input data-gw="${gw.key}" data-f="bandwidth" value="${gw.bandwidth}"></label>
+    <label class="field"><span>Logical Sys</span><input data-gw="${gw.key}" data-f="logicalSys" value="${gw.logicalSys}" placeholder="None"></label>
+    <label class="field"><span>Neighbor IP</span><input data-gw="${gw.key}" data-f="neighbor" value="${gw.neighbor}"></label>
+  `;
+  gwGrid.appendChild(card);
+});
 
-        document.getElementById('output').textContent = storageCache[serviceName] || '';
-    }
+function updateBandwidthUI(){
+  const values = GATEWAYS.map(gw => {
+    const inp = document.querySelector(`input[data-gw="${gw.key}"][data-f="bandwidth"]`);
+    return parseBw(inp ? inp.value : gw.bandwidth);
+  });
+  const max = Math.max(...values, 1);
+  let total = 0;
+  GATEWAYS.forEach((gw, i) => {
+    const mbps = values[i];
+    total += mbps;
+    const badge = document.getElementById(`badge-${gw.key}`);
+    const bar = document.getElementById(`bar-${gw.key}`);
+    const inp = document.querySelector(`input[data-gw="${gw.key}"][data-f="bandwidth"]`);
+    if (badge) badge.textContent = inp ? inp.value : gw.bandwidth;
+    if (bar) bar.style.width = Math.max(4, (mbps / max) * 100) + '%';
+  });
+  const statBw = document.getElementById('statBw');
+  const statActive = document.getElementById('statActive');
+  if (statBw) statBw.textContent = ' ' + formatBw(total);
+  if (statActive) statActive.textContent = GATEWAYS.length;
+}
 
-    function generateAll() {
-        const intf = document.getElementById('interface').value.trim();
-        const pop = document.getElementById('pop_name').value.trim();
-        const peerAs = document.getElementById('peer_as').value.trim();
-        const localAs = document.getElementById('local_as').value.trim();
-        const burst = document.getElementById('burst_limit').value.trim();
-        const routesText = document.getElementById('routes').value.trim();
-        const routesArray = routesText.split('\n').map(r => r.trim()).filter(r => r.length > 0);
+const tabsEl = document.getElementById('tabs');
+GATEWAYS.forEach((gw, i) => {
+  const btn = document.createElement('button');
+  btn.className = 'tab-btn' + (i === 0 ? ' active' : '');
+  btn.textContent = gw.label + ' Config';
+  btn.dataset.key = gw.key;
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeKey = gw.key;
+    render();
+  });
+  tabsEl.appendChild(btn);
+});
 
-        const configurationsMap = [
-            { key: 'IIG', unit: 'iig_unit', bw: 'iig_bw', ls: 'iig_ls', ip: 'iig_neighbor', exp: 'FOR-DEFAULT-ROUTE-EXPORT', comm: 'IIG-BGP-CLIENTS-IMPORT' },
-            { key: 'GGC', unit: 'ggc_unit', bw: 'ggc_bw', ls: 'ggc_ls', ip: 'ggc_neighbor', exp: 'FOR-EBGP-GGC-CLIENTS-EXPORT', comm: 'GGC-BGP-CLIENTS-IMPORT' },
-            { key: 'FNA', unit: 'fna_unit', bw: 'fna_bw', ls: 'fna_ls', ip: 'fna_neighbor', exp: 'FOR-EBGP-FNA-CLIENTS-EXPORT', comm: 'FNA-BGP-CLIENTS-IMPORT' },
-            { key: 'BDIX', unit: 'bdix_unit', bw: 'bdix_bw', ls: 'bdix_ls', ip: 'bdix_neighbor', exp: 'FOR-EBGP-BDIX-CLIENTS-EXPORT', comm: 'BDIX-BGP-CLIENTS-IMPORT' },
-            { key: 'CDN', unit: 'cdn_unit', bw: 'cdn_bw', ls: 'cdn_ls', ip: 'cdn_neighbor', exp: 'FOR-EBGP-CDN-CLIENTS-EXPORT', comm: 'CDN-BGP-CLIENTS-IMPORT' },
-            { key: 'BCDN', unit: 'bcdn_unit', bw: 'bcdn_bw', ls: 'bcdn_ls', ip: 'bcdn_neighbor', exp: 'FOR-EBGP-BCDN-CLIENTS-EXPORT', comm: 'BCDN-BGP-CLIENTS-IMPORT' }
-        ];
+let activeKey = 'iig';
 
-        configurationsMap.forEach(item => {
-            const u = document.getElementById(item.unit).value.trim();
-            const b = document.getElementById(item.bw).value.trim();
-            const l = document.getElementById(item.ls).value.trim();
-            const neighborIP = document.getElementById(item.ip).value.trim();
-            
-            const desc = `${pop}-${item.key}`;
-            const prefix = l ? `set logical-systems ${l} ` : `set `;
-            
-            let block = '';
-            block += `${prefix}interfaces ${intf} unit ${u} description ${desc}\n`;
-            block += `${prefix}interfaces ${intf} unit ${u} family inet policer output ${desc}\n`;
-            
-            block += `${prefix}protocols bgp group ${desc} type external\n`;
-            block += `${prefix}protocols bgp group ${desc} import ${desc}-IMPORT\n`;
-            block += `${prefix}protocols bgp group ${desc} export ${item.exp}\n`;
-            block += `${prefix}protocols bgp group ${desc} peer-as ${peerAs}\n`;
-            block += `${prefix}protocols bgp group ${desc} local-as ${localAs}\n`;
-            block += `${prefix}protocols bgp group ${desc} neighbor ${neighborIP}\n`;
+function decrementLastOctet(ip){
+  const parts = ip.trim().split('.');
+  if (parts.length !== 4) return ip;
+  let last = parseInt(parts[3], 10);
+  if (isNaN(last)) return ip;
+  last = last - 1;
+  if (last < 0) last = 0;
+  parts[3] = String(last);
+  return parts.join('.');
+}
 
-            routesArray.forEach(route => {
-                block += `${prefix}policy-options policy-statement ${desc}-IMPORT term 1 from route-filter ${route}\n`;
-            });
-            block += `${prefix}policy-options policy-statement ${desc}-IMPORT term 1 then community add ${item.comm}\n`;
-            block += `${prefix}policy-options policy-statement ${desc}-IMPORT term 1 then accept\n`;
-            block += `${prefix}policy-options policy-statement ${desc}-IMPORT term 100 then reject\n`;
+function readGlobals(){
+  return {
+    iface: document.getElementById('g_iface').value.trim() || 'ae0',
+    suffix: document.getElementById('g_suffix').value.trim(),
+    peerAs: document.getElementById('g_peeras').value.trim(),
+    localAs: document.getElementById('g_localas').value.trim(),
+    burst: document.getElementById('g_burst').value.trim(),
+  };
+}
 
-            block += `set firewall policer ${desc} if-exceeding bandwidth-limit ${b}\n`;
-            block += `set firewall policer ${desc} if-exceeding burst-size-limit ${burst}\n`;
-            block += `set firewall policer ${desc} then discard\n`;
+function readGateway(key){
+  const base = GATEWAYS.find(g => g.key === key);
+  const inputs = document.querySelectorAll(`input[data-gw="${key}"]`);
+  const gw = {...base};
+  inputs.forEach(inp => { gw[inp.dataset.f] = inp.value.trim(); });
+  return gw;
+}
 
-            storageCache[item.key] = block;
-        });
+function readFilters(){
+  return document.getElementById('routeFilters').value
+    .split('\n')
+    .map(l => l.trim())
+    .filter(l => l.length > 0);
+}
 
-        document.getElementById('output').textContent = storageCache[activeServiceTab] || '';
-    }
+function buildConfig(gw, globals, filters){
+  const groupName = `${globals.suffix}-${gw.short}`;
+  const importPolicy = `${groupName}-IMPORT`;
+  const community = `${gw.short}-BGP-CLIENTS-IMPORT`;
+  const hasLS = gw.logicalSys && gw.logicalSys.toLowerCase() !== 'none' && gw.logicalSys !== '';
+  const lsPrefix = hasLS ? `logical-systems ${gw.logicalSys} ` : '';
+  const exportPolicy = hasLS ? `FOR-EBGP-${gw.logicalSys}-Clients-EXPORT` : 'DEFAULT-ROUTE-EXPORT';
+  const localIp = decrementLastOctet(gw.neighbor);
+  const unit = gw.unit;
 
-    function copyCurrentTab() {
-        const activeText = storageCache[activeServiceTab];
-        if(!activeText) return;
-        navigator.clipboard.writeText(activeText).then(() => {
-            alert(`${activeServiceTab} config successfully copied!`);
-        });
-    }
+  const lines = [];
+  lines.push(`set ${lsPrefix}interfaces ${globals.iface} unit ${unit} description ${groupName}`);
+  lines.push(`set ${lsPrefix}interfaces ${globals.iface} unit ${unit} vlan-id ${unit}`);
+  lines.push(`set ${lsPrefix}interfaces ${globals.iface} unit ${unit} family inet address ${localIp}/30`);
+  if (!hasLS){
+    lines.push(`set interfaces ${globals.iface} unit ${unit} family inet policer output ${groupName}`);
+  }
+  lines.push(`set ${lsPrefix}protocols bgp group ${groupName} type external`);
+  lines.push(`set ${lsPrefix}protocols bgp group ${groupName} description ${groupName}`);
+  lines.push(`set ${lsPrefix}protocols bgp group ${groupName} import ${importPolicy}`);
+  lines.push(`set ${lsPrefix}protocols bgp group ${groupName} export ${exportPolicy}`);
+  lines.push(`set ${lsPrefix}protocols bgp group ${groupName} peer-as ${globals.peerAs}`);
+  lines.push(`set ${lsPrefix}protocols bgp group ${groupName} local-as ${globals.localAs}`);
+  lines.push(`set ${lsPrefix}protocols bgp group ${groupName} neighbor ${gw.neighbor}`);
+  filters.forEach(f => {
+    lines.push(`set ${lsPrefix}policy-options policy-statement ${importPolicy} term 1 from route-filter ${f}`);
+  });
+  lines.push(`set ${lsPrefix}policy-options policy-statement ${importPolicy} term 1 then local-preference 1500`);
+  lines.push(`set ${lsPrefix}policy-options policy-statement ${importPolicy} term 1 then community add ${community}`);
+  lines.push(`set ${lsPrefix}policy-options policy-statement ${importPolicy} term 1 then accept`);
+  lines.push(`set ${lsPrefix}policy-options policy-statement ${importPolicy} term 100 then reject`);
+  lines.push(`set firewall policer ${groupName} if-exceeding bandwidth-limit ${gw.bandwidth}`);
+  lines.push(`set firewall policer ${groupName} if-exceeding burst-size-limit ${globals.burst}`);
+  lines.push(`set firewall policer ${groupName} then discard`);
 
-    window.onload = generateAll;
+  return lines.join('\n');
+}
+
+const KEYWORDS = ['set','interfaces','unit','description','vlan-id','family','inet','address','policer','output',
+  'protocols','bgp','group','type','external','import','export','peer-as','local-as','neighbor',
+  'policy-options','policy-statement','term','from','route-filter','exact','then','local-preference','community','add',
+  'accept','reject','firewall','if-exceeding','bandwidth-limit','burst-size-limit','discard','logical-systems'];
+
+const TOKEN_RE = new RegExp(
+  '(\\d{1,3}(?:\\.\\d{1,3}){3}(?:/\\d{1,2})?)' +          // ip / cidr
+  '|(\\d+(?:\\.\\d+)?[mgk])' +                              // bandwidth-style value
+  '|(\\b(?:' + KEYWORDS.join('|') + ')\\b)' +               // keywords
+  '|(\\d+)',                                                // plain numbers
+  'gi'
+);
+
+function highlight(text){
+  const escaped = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return escaped.replace(TOKEN_RE, (match, ip, bw, kw, num) => {
+    if (ip) return `<span class="ip">${ip}</span>`;
+    if (bw) return `<span class="bw">${bw}</span>`;
+    if (kw) return `<span class="kw">${kw}</span>`;
+    if (num) return `<span class="num">${num}</span>`;
+    return match;
+  });
+}
+
+const RF_LINE_RE = /^\d{1,3}(?:\.\d{1,3}){3}\/\d{1,2}\s+exact$/i;
+
+function updateRouteFilterUI(){
+  const ta = document.getElementById('routeFilters');
+  const gutter = document.getElementById('rfGutter');
+  const status = document.getElementById('rfStatus');
+  const lines = ta.value.split('\n');
+  gutter.textContent = lines.map((_, i) => i + 1).join('\n');
+  gutter.scrollTop = ta.scrollTop;
+  status.innerHTML = lines.map((line, i) => {
+    const trimmed = line.trim();
+    if (trimmed === '') return '';
+    const ok = RF_LINE_RE.test(trimmed);
+    return `<span class="${ok ? 'ok' : 'bad'}">Line ${i+1}: ${ok ? 'valid route-filter' : 'invalid format — expected "a.b.c.d/nn exact"'}</span>`;
+  }).filter(Boolean).join('');
+}
+
+const rfTextarea = document.getElementById('routeFilters');
+rfTextarea.addEventListener('scroll', () => {
+  document.getElementById('rfGutter').scrollTop = rfTextarea.scrollTop;
+});
+
+function render(){
+  const globals = readGlobals();
+  const filters = readFilters();
+  const gw = readGateway(activeKey);
+  const cfg = buildConfig(gw, globals, filters);
+  document.getElementById('outLabel').textContent = `${gw.label} Raw Commands (Standard Context):`;
+  document.getElementById('codeOut').innerHTML = highlight(cfg);
+  updateBandwidthUI();
+  updateRouteFilterUI();
+}
+
+document.addEventListener('input', (e) => {
+  if (e.target.closest('.card')) render();
+});
+
+document.getElementById('copyBtn').addEventListener('click', () => {
+  const text = document.getElementById('codeOut').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyBtn');
+    const original = btn.textContent;
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1500);
+  });
+});
+
+document.getElementById('themeToggle').addEventListener('click', () => {
+  const body = document.body;
+  const isDark = body.getAttribute('data-theme') === 'dark';
+  body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('themeToggle').textContent = isDark ? '🌙 Dark Mode' : '☀️ Light Mode';
+});
+
+render();
 </script>
 
 </body>
