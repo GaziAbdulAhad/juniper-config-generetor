@@ -360,6 +360,17 @@
   }
   .tab.active .n{ color: var(--amber); }
 
+  .tab.tab-client{
+    color: var(--green);
+    border-color: rgba(126,226,126,0.35);
+    margin-left: 6px;
+  }
+  .tab.tab-client.active{
+    color: var(--green);
+    border-color: var(--green);
+    box-shadow: inset 0 2px 0 var(--green);
+  }
+
   #output{
     margin:0;
     padding: 18px 16px 24px;
@@ -394,6 +405,24 @@
   #output .grp-header:first-child{ margin-top: 0; }
   #output .grp-header::before{ content:"# "; color: var(--text-dim); }
   #output .sub-header::before{ content:"-- "; color: var(--line); }
+
+  #output .cs-block{ margin-bottom: 16px; display:block; }
+  #output .cs-title{
+    display:block;
+    color: var(--green);
+    font-size: 12.5px;
+    letter-spacing: 1.5px;
+    margin-bottom: 4px;
+  }
+  #output .cs-row{ display:block; }
+  #output .cs-label{ color: var(--text-dim); }
+  #output .cs-val{ color: var(--amber-bright); }
+  #output .cs-footer{
+    display:block;
+    margin-top: 6px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+  }
 
   #output .placeholder{
     color: var(--text-dim);
@@ -679,6 +708,7 @@
 
   let activeTab = "ALL";
   let blocksCache = {}; // key -> html string (only for currently-on services)
+  let clientSheetHtml = "";
 
   function renderTabs(onKeys){
     const bar = document.getElementById("outputTabs");
@@ -689,6 +719,7 @@
       if(onKeys.indexOf(svc.key) === -1) return;
       html += `<button class="tab ${activeTab === svc.key ? 'active' : ''}" data-tab="${svc.key}"><span class="n">0${i+1}</span>${svc.key}</button>`;
     });
+    html += `<button class="tab tab-client ${activeTab === 'CLIENT' ? 'active' : ''}" data-tab="CLIENT"><span class="n">&#9993;</span>CLIENT SHEET</button>`;
     bar.innerHTML = html;
 
     bar.querySelectorAll(".tab").forEach(btn => {
@@ -705,11 +736,13 @@
       document.getElementById("output").innerHTML = '<span class="placeholder">// Circuit parameter fill korle ekhane auto config generate hobe...</span>';
       return;
     }
-    if(activeTab !== "ALL" && onKeys.indexOf(activeTab) === -1) activeTab = "ALL";
+    if(activeTab !== "ALL" && activeTab !== "CLIENT" && onKeys.indexOf(activeTab) === -1) activeTab = "ALL";
 
     let html = "";
     if(activeTab === "ALL"){
       onKeys.forEach(k => { html += blocksCache[k]; });
+    } else if(activeTab === "CLIENT"){
+      html = clientSheetHtml;
     } else {
       html = blocksCache[activeTab] || "";
     }
@@ -808,6 +841,29 @@
       blocksCache[svc.key] = out;
     });
 
+    // ---- Client-facing handover sheet ----
+    let cs = "";
+    SERVICES.forEach(svc => {
+      const s = state[svc.key];
+      if(!s.on) return;
+      cs += `<span class="cs-block">`;
+      cs += `<span class="cs-title">${esc(svc.key)}</span>`;
+      cs += `<span class="cs-row"><span class="cs-label">VLAN: </span><span class="cs-val">${esc(s.unit || "")}</span></span>\n`;
+      cs += `<span class="cs-row"><span class="cs-label">Layer3 IP: </span><span class="cs-val">${esc(s.ownIp || "")}</span></span>\n`;
+      cs += `<span class="cs-row"><span class="cs-label">Your IP: </span><span class="cs-val">${esc(s.neighborIp || "")}</span></span>`;
+      cs += `</span>\n`;
+    });
+    cs += `<span class="cs-footer">`;
+    cs += `<span class="cs-row">All service will eBGP peer.</span>\n`;
+    cs += `<span class="cs-row"><span class="cs-label">Your AS: </span><span class="cs-val">${esc(PAS)}</span></span>\n`;
+    cs += `<span class="cs-row"><span class="cs-label">Layer3 AS: </span><span class="cs-val">${esc(LAS)}</span></span>\n`;
+    cs += `<span class="cs-row"><span class="cs-label">Your NAT IP:</span></span>\n`;
+    CBS.forEach(cb => {
+      cs += `<span class="cs-row"><span class="cs-val">${esc(cb)}</span></span>\n`;
+    });
+    cs += `</span>`;
+    clientSheetHtml = cs;
+
     renderTabs(onKeys);
     paintOutput();
   }
@@ -840,12 +896,14 @@
     const text = document.getElementById("output").innerText;
     if(!text || text.indexOf("Circuit parameter") !== -1) return;
     const name = (custNameEl.value || "client-config").trim().replace(/\s+/g, "-");
+    const isClient = activeTab === "CLIENT";
     const suffix = activeTab === "ALL" ? "" : `-${activeTab}`;
+    const ext = isClient ? "txt" : "set";
     const blob = new Blob([text], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${name}${suffix}.set`;
+    a.download = `${name}${suffix}.${ext}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
