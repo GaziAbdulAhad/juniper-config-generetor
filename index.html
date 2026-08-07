@@ -3,565 +3,857 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Juniper Engine v3.0</title>
+<title>JUNOS Client Provisioning Console</title>
 <style>
   :root{
-    --bg:#0a1120;
-    --panel:#111a2e;
-    --panel-2:#0c1424;
-    --border:#1e2a45;
-    --text:#e6ebf5;
-    --muted:#7b88a8;
-    --label:#8493b3;
-    --accent:#4fb3f5;
-    --accent-2:#7dd3fc;
-    --code:#7ee787;
-    --code-2:#79c0ff;
-    --green-dot:#3fb950;
-    --btn-bg:#16213a;
-    --btn-border:#28395c;
-    --input-bg:#0a1223;
-    --shadow: 0 1px 0 rgba(255,255,255,0.02) inset;
-    --amber:#e3b341;
-    --purple:#c297ff;
-    --pink:#ff9ac2;
-    --danger:#f85149;
-    --track:#1a2340;
+    --bg: #0c0f0a;
+    --bg2: #12160f;
+    --panel: #14180f;
+    --line: #2a3320;
+    --amber: #ffb32e;
+    --amber-dim: #a8752a;
+    --amber-bright: #ffd479;
+    --green: #7ee27e;
+    --red: #ff6b5e;
+    --text: #d9d3b8;
+    --text-dim: #7d7a61;
+    --mono: "IBM Plex Mono", "Cascadia Code", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   }
-  [data-theme="light"]{
-    --bg:#eef1f7;
-    --panel:#ffffff;
-    --panel-2:#f4f6fb;
-    --border:#dbe2f0;
-    --text:#1b2436;
-    --muted:#64708a;
-    --label:#57627e;
-    --accent:#1d7fc4;
-    --accent-2:#0f6bab;
-    --code:#0a7d3a;
-    --code-2:#0757b3;
-    --green-dot:#1a9c46;
-    --btn-bg:#eef2fa;
-    --btn-border:#c8d3e8;
-    --input-bg:#ffffff;
-    --amber:#b3790a;
-    --purple:#7a3fd6;
-    --pink:#c23b78;
-    --danger:#c62828;
-    --track:#e3e9f5;
+
+  *{ box-sizing:border-box; }
+
+  html,body{
+    margin:0; padding:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    min-height:100vh;
   }
-  *{box-sizing:border-box;}
+
   body{
+    background-image:
+      radial-gradient(ellipse at top, rgba(255,179,46,0.05), transparent 60%),
+      repeating-linear-gradient(0deg, rgba(255,179,46,0.018) 0px, rgba(255,179,46,0.018) 1px, transparent 1px, transparent 3px);
+  }
+
+  .crt-frame{
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+  }
+
+  /* ---------- Header ---------- */
+  .topbar{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 14px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .brand{
+    display:flex;
+    align-items:baseline;
+    gap: 12px;
+  }
+
+  .brand .dot{
+    width:9px; height:9px;
+    background: var(--amber);
+    box-shadow: 0 0 8px 2px rgba(255,179,46,0.7);
+    border-radius: 50%;
+    display:inline-block;
+    animation: pulse 2.2s ease-in-out infinite;
+  }
+
+  @keyframes pulse{
+    0%,100%{ opacity:1; }
+    50%{ opacity:0.35; }
+  }
+
+  .brand h1{
+    font-size: 15px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
     margin:0;
-    background:var(--bg);
-    color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    padding-bottom:60px;
+    color: var(--amber-bright);
+    font-weight: 600;
   }
-  header{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:16px 28px;
-    border-bottom:1px solid var(--border);
-    background:var(--panel);
-    flex-wrap:wrap;
-    gap:12px;
+
+  .brand .sub{
+    color: var(--text-dim);
+    font-size: 11.5px;
+    letter-spacing: 1px;
   }
-  .header-left{display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
-  header h1{
-    font-size:19px;margin:0;color:var(--accent);
-    letter-spacing:0.2px;
+
+  .status-chip{
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: var(--bg);
+    background: var(--amber);
+    padding: 4px 10px;
+    text-transform: uppercase;
   }
-  .stats{display:flex;gap:10px;flex-wrap:wrap;}
-  .stat-pill{
-    display:flex;align-items:center;gap:7px;
-    background:var(--panel-2);
-    border:1px solid var(--border);
-    padding:6px 12px;
-    border-radius:20px;
-    font-size:12px;
-    color:var(--muted);
-  }
-  .stat-pill b{color:var(--text);font-weight:600;}
-  .stat-pill .dot-sm{width:6px;height:6px;border-radius:50%;background:var(--green-dot);display:inline-block;}
-  .theme-btn{
-    background:var(--btn-bg);
-    border:1px solid var(--btn-border);
-    color:var(--text);
-    padding:8px 14px;
-    border-radius:8px;
-    font-size:13px;
-    cursor:pointer;
-  }
-  .wrap{max-width:1200px;margin:0 auto;padding:24px;}
-  .card{
-    background:var(--panel);
-    border:1px solid var(--border);
-    border-radius:12px;
-    padding:20px 22px;
-    margin-bottom:22px;
-  }
-  .card h2{
-    font-size:15px;
-    color:var(--accent-2);
-    margin:0 0 14px 0;
-    display:flex;align-items:center;gap:8px;
-    border-bottom:1px solid var(--border);
-    padding-bottom:12px;
-  }
+
+  /* ---------- Layout ---------- */
   .grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
-    gap:16px;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    align-items: start;
   }
-  label.field{display:flex;flex-direction:column;gap:6px;}
-  label.field span{
-    font-size:11px;letter-spacing:0.06em;
-    color:var(--label);text-transform:uppercase;
+
+  .panel{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    position: relative;
   }
-  input, textarea, select{
-    background:var(--input-bg);
-    border:1px solid var(--border);
-    color:var(--text);
-    padding:9px 11px;
-    border-radius:8px;
-    font-size:13.5px;
-    font-family:inherit;
-    width:100%;
+
+  .panel::before{
+    content:"";
+    position:absolute; top:0; left:0; right:0; height:2px;
+    background: linear-gradient(90deg, transparent, var(--amber-dim), transparent);
+    opacity:0.6;
   }
-  input:focus, textarea:focus{
-    outline:none;border-color:var(--accent);
+
+  .panel-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg2);
   }
-  .gw-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:16px;
-  }
-  @media (max-width:860px){
-    .gw-grid{grid-template-columns:repeat(2,1fr);}
-  }
-  @media (max-width:560px){
-    .gw-grid{grid-template-columns:1fr;}
-  }
-  .gw-card{
-    background:var(--panel-2);
-    border:1px solid var(--border);
-    border-left:3px solid var(--gw-accent, var(--accent));
-    border-radius:10px;
-    padding:16px;
-  }
-  .gw-card .gw-head{
-    display:flex;align-items:center;justify-content:space-between;
-    margin-bottom:12px;
-  }
-  .gw-card h3{
-    margin:0;font-size:14px;color:var(--text);
-  }
-  .bw-badge{
-    font-size:11px;font-weight:700;
-    color:var(--gw-accent, var(--accent));
-    background:color-mix(in srgb, var(--gw-accent, var(--accent)) 16%, transparent);
-    padding:3px 8px;border-radius:6px;
-    font-family:"SF Mono",Consolas,Menlo,monospace;
-  }
-  .bw-bar-track{
-    height:5px;border-radius:3px;background:var(--track);
-    overflow:hidden;margin-bottom:14px;
-  }
-  .bw-bar-fill{
-    height:100%;border-radius:3px;
-    background:var(--gw-accent, var(--accent));
-    transition:width .25s ease;
-  }
-  .gw-card .field{margin-bottom:12px;}
-  .gw-card .field:last-child{margin-bottom:0;}
-  .rf-wrap{
-    display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;
-    background:var(--input-bg);
-  }
-  .rf-gutter{
-    padding:9px 10px;
-    background:var(--panel-2);
-    color:var(--muted);
-    font-family:"SF Mono",Consolas,Menlo,monospace;
-    font-size:13px;line-height:1.5;
-    text-align:right;
-    user-select:none;
-    overflow:hidden;
-    border-right:1px solid var(--border);
-    white-space:pre;
-  }
-  textarea#routeFilters{
-    min-height:90px;font-family:"SF Mono",Consolas,Menlo,monospace;
-    resize:vertical;border:none;border-radius:0;
-    line-height:1.5;flex:1;
-  }
-  textarea#routeFilters:focus{outline:none;}
-  .rf-status{
-    margin-top:8px;display:flex;flex-direction:column;gap:3px;
-    font-family:"SF Mono",Consolas,Menlo,monospace;font-size:11.5px;
-  }
-  .rf-status .ok{color:var(--green-dot);}
-  .rf-status .bad{color:var(--danger);}
-  .tabs{
-    display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;
-    padding-bottom:14px;
-    border-bottom:1px solid var(--border);
-  }
-  .tab-btn{
-    background:var(--btn-bg);
-    border:1px solid var(--btn-border);
-    color:var(--muted);
-    padding:8px 15px;
-    border-radius:20px;
-    font-size:12.5px;
-    cursor:pointer;
-    transition:background .15s, color .15s, border-color .15s;
-  }
-  .tab-btn:hover{color:var(--text);border-color:var(--accent);}
-  .tab-btn.active{
-    background:var(--accent);
-    border-color:var(--accent);
-    color:#031321;
-    font-weight:600;
-  }
-  .out-header{
-    display:flex;align-items:center;justify-content:space-between;
-    margin-bottom:10px;
-  }
-  .out-title{
-    display:flex;align-items:center;gap:8px;
-    font-size:13px;color:#4dd07a;
-  }
-  .dot{
-    width:8px;height:8px;border-radius:50%;background:var(--green-dot);
-    display:inline-block;
-  }
-  .copy-btn{
-    background:#0d7a4f;
-    border:1px solid #0d7a4f;
-    color:#fff;
-    padding:8px 18px;
-    border-radius:8px;
-    font-size:12.5px;
-    cursor:pointer;
-    font-weight:600;
-    display:flex;align-items:center;gap:6px;
-    transition:background .15s, border-color .15s, transform .1s;
-  }
-  .copy-btn:active{transform:scale(0.97);}
-  .copy-btn.copied{background:#1d7fc4;border-color:#1d7fc4;}
-  pre#codeOut{
-    background:var(--panel-2);
-    border:1px solid var(--border);
-    border-radius:10px;
-    padding:18px 20px;
-    font-family:"SF Mono",Consolas,Menlo,monospace;
-    font-size:13px;
-    line-height:1.65;
-    color:var(--code);
-    overflow-x:auto;
-    white-space:pre;
+
+  .panel-head h2{
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
     margin:0;
+    font-weight: 600;
   }
-  pre#codeOut .kw{color:var(--code-2);}
-  pre#codeOut .ip{color:var(--amber);}
-  pre#codeOut .bw{color:var(--pink);font-weight:600;}
-  pre#codeOut .num{color:var(--purple);}
-  .hint{
-    font-size:12px;color:var(--muted);margin:10px 2px 0 2px;
+
+  .panel-body{ padding: 16px; }
+
+  /* ---------- Form ---------- */
+  .field-row{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+  }
+  .field-row.single{ grid-template-columns: 1fr; }
+
+  .field{ margin-bottom: 14px; }
+
+  .field label{
+    display:block;
+    font-size: 10.5px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--amber-dim);
+    margin-bottom: 5px;
+  }
+
+  .field input, .field select{
+    width: 100%;
+    background: #0a0d08;
+    border: 1px solid var(--line);
+    color: var(--amber-bright);
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 8px 9px;
+    outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+
+  .field input::placeholder{ color: #4a4735; }
+
+  .field input:focus, .field select:focus{
+    border-color: var(--amber);
+    box-shadow: 0 0 0 1px rgba(255,179,46,0.25);
+  }
+
+  .field .hint{
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  .hr-label{
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    margin: 18px 0 12px;
+    color: var(--text-dim);
+    font-size: 10.5px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .hr-label::before, .hr-label::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background: var(--line);
+  }
+
+  /* Service toggle cards */
+  #services{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 10px;
+    align-items: start;
+  }
+
+  .svc{
+    border: 1px solid var(--line);
+    margin-bottom: 0;
+    background: #0a0d08;
+  }
+
+  .svc-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 9px 11px;
+    cursor:pointer;
+    user-select:none;
+  }
+
+  .svc-head .name{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: var(--text);
+  }
+
+  .svc-tag{
+    font-size: 9.5px;
+    padding: 1px 6px;
+    border: 1px solid var(--line);
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  .svc.on .svc-tag{ color: var(--green); border-color: var(--green); }
+  .svc.on .svc-head .name{ color: var(--amber-bright); }
+
+  .switch{
+    position:relative;
+    width: 34px; height: 18px;
+    background:#1c2116;
+    border: 1px solid var(--line);
+    flex-shrink:0;
+  }
+  .switch::after{
+    content:"";
+    position:absolute;
+    top:2px; left:2px;
+    width:12px; height:12px;
+    background: var(--text-dim);
+    transition: all .15s ease;
+  }
+  .svc.on .switch{ border-color: var(--amber); }
+  .svc.on .switch::after{
+    left: 18px;
+    background: var(--amber);
+    box-shadow: 0 0 6px rgba(255,179,46,0.6);
+  }
+
+  .svc-body{
+    padding: 0 11px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .2s ease, padding .2s ease;
+  }
+  .svc.on .svc-body{
+    max-height: 500px;
+    padding: 4px 11px 12px;
+  }
+
+  .svc-body .field-row{ grid-template-columns: 1fr 1fr; }
+  .svc-body .field{ margin-bottom: 10px; }
+  .svc-body .field label{ font-size: 9.5px; }
+  .svc-body .field input{ font-size: 12px; padding: 6px 8px; }
+
+  /* ---------- Output ---------- */
+  .output-tools{
+    display:flex;
+    gap: 8px;
+    align-items:center;
+  }
+
+  .btn{
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--text-dim);
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+
+  .btn:hover{
+    border-color: var(--amber);
+    color: var(--amber-bright);
+  }
+
+  .btn.primary{
+    border-color: var(--amber-dim);
+    color: var(--amber);
+  }
+  .btn.primary:hover{
+    background: var(--amber);
+    color: #14180f;
+  }
+
+  .btn.copied{
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  .tabbar{
+    display:flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    padding: 10px 16px 0;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .tab{
+    background: transparent;
+    border: 1px solid var(--line);
+    border-bottom: none;
+    color: var(--text-dim);
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+    padding: 7px 13px;
+    cursor: pointer;
+    margin-bottom: -1px;
+    transition: all .15s ease;
+  }
+
+  .tab:hover{ color: var(--amber-bright); }
+
+  .tab.active{
+    color: var(--amber-bright);
+    border-color: var(--amber-dim);
+    background: var(--panel);
+    box-shadow: inset 0 2px 0 var(--amber);
+  }
+
+  .tab .n{
+    color: var(--text-dim);
+    margin-right: 5px;
+    font-size: 9.5px;
+  }
+  .tab.active .n{ color: var(--amber); }
+
+  #output{
+    margin:0;
+    padding: 18px 16px 24px;
+    font-size: 12.5px;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    word-break: break-word;
+    min-height: 420px;
+    max-height: 74vh;
+    overflow-y: auto;
+  }
+
+  #output .ln-set{ color: var(--amber-dim); }
+  #output .ln-path{ color: var(--text); }
+  #output .ln-val{ color: var(--amber-bright); }
+  #output .grp-header{
+    display:block;
+    color: var(--green);
+    margin: 14px 0 6px;
+    letter-spacing: 1.5px;
+    font-size: 11px;
+    text-transform: uppercase;
+  }
+  #output .sub-header{
+    display:block;
+    color: var(--amber-dim);
+    margin: 10px 0 4px;
+    letter-spacing: 1.2px;
+    font-size: 10px;
+    text-transform: uppercase;
+  }
+  #output .grp-header:first-child{ margin-top: 0; }
+  #output .grp-header::before{ content:"# "; color: var(--text-dim); }
+  #output .sub-header::before{ content:"-- "; color: var(--line); }
+
+  #output .placeholder{
+    color: var(--text-dim);
+    font-style: normal;
+  }
+
+  ::-webkit-scrollbar{ width: 9px; height:9px; }
+  ::-webkit-scrollbar-track{ background: var(--bg2); }
+  ::-webkit-scrollbar-thumb{ background: var(--line); }
+  ::-webkit-scrollbar-thumb:hover{ background: var(--amber-dim); }
+
+  .footnote{
+    margin-top: 16px;
+    font-size: 10.5px;
+    color: var(--text-dim);
+    letter-spacing: 0.5px;
+    display:flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .kbd{
+    border: 1px solid var(--line);
+    padding: 1px 5px;
+    color: var(--text-dim);
   }
 </style>
 </head>
-<body data-theme="dark">
+<body>
 
-<header>
-  <div class="header-left">
-    <h1>Juniper Engine v3.0</h1>
-    <div class="stats">
-      <span class="stat-pill"><span class="dot-sm"></span><b id="statActive">6</b>&nbsp;Gateways Active</span>
-      <span class="stat-pill">Total Bandwidth: <b id="statBw">&nbsp;2.4G</b></span>
+<div class="crt-frame">
+
+  <div class="topbar">
+    <div class="brand">
+      <span class="dot"></span>
+      <h1>Client Provisioning Console</h1>
+      <span class="sub">JUNOS &middot; eBGP customer onboarding &middot; interface + BGP + policy + policer</span>
     </div>
-  </div>
-  <button class="theme-btn" id="themeToggle">☀️ Light Mode</button>
-</header>
-
-<div class="wrap">
-
-  <div class="card">
-    <h2>🌐 Global Nodes</h2>
-    <div class="grid">
-      <label class="field"><span>Interface</span><input id="g_iface" value="ae0"></label>
-      <label class="field"><span>POP Location Suffix</span><input id="g_suffix" value="Relation-cable-kurigram"></label>
-      <label class="field"><span>Peer AS</span><input id="g_peeras" value="65001"></label>
-      <label class="field"><span>Local AS</span><input id="g_localas" value="136141"></label>
-      <label class="field"><span>Burst Limit</span><input id="g_burst" value="5m"></label>
-    </div>
+    <div class="status-chip">live</div>
   </div>
 
-  <div class="card">
-    <h2>🛠️ Gateways &amp; Service Vectors</h2>
-    <div class="gw-grid" id="gwGrid"></div>
+  <div class="grid">
 
-    <div class="hint">Route Filter Injections (one per line, applied to every gateway's import policy)</div>
-    <div class="rf-wrap" style="margin-top:8px;">
-      <div class="rf-gutter" id="rfGutter">1
-2</div>
-      <textarea id="routeFilters" spellcheck="false">103.81.104.92/30 exact
-121.200.221.112/30 exact</textarea>
+    <!-- LEFT: FORM -->
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Circuit Parameters</h2>
+      </div>
+      <div class="panel-body">
+
+        <div class="field">
+          <label for="custName">PoP / Customer Name</label>
+          <input id="custName" placeholder="e.g. Gokul-Nurullaganj-PoP" autocomplete="off">
+          <div class="hint">Ei naam-e group / policy / interface description toiri hobe (case jemon type korben temoni thakbe).</div>
+        </div>
+
+        <div class="field">
+          <label for="clientBlock">Client Route Block / NAT IP (route-filter)</label>
+          <textarea id="clientBlock" placeholder="103.81.105.116/30&#10;103.81.105.120/30" autocomplete="off" rows="2" style="width:100%; background:#0a0d08; border:1px solid var(--line); color:var(--amber-bright); font-family:var(--mono); font-size:13px; padding:8px 9px; outline:none; resize:vertical;"></textarea>
+          <div class="hint">Ekadhik NAT IP thakle notun line-e ba comma diye alada alada likhun — protyekta jonno alada route-filter line generate hobe.</div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="peerAs">Your AS (Customer / peer-as)</label>
+            <input id="peerAs" placeholder="65001" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="localAs">Layer3 AS (Router / local-as)</label>
+            <input id="localAs" placeholder="136141" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="localPref">Local Preference</label>
+            <input id="localPref" placeholder="1500" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="burstSize">Policer Burst Size (Mbps)</label>
+            <input id="burstSize" placeholder="5" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="ifaceName">Interface</label>
+          <input id="ifaceName" placeholder="ae0" autocomplete="off">
+        </div>
+
+        <div class="hr-label">Uplink Services</div>
+
+        <div id="services"></div>
+
+      </div>
     </div>
-    <div class="rf-status" id="rfStatus"></div>
+
+    <!-- RIGHT: OUTPUT -->
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Generated set-commands</h2>
+        <div class="output-tools">
+          <button class="btn" id="clearBtn">Clear</button>
+          <button class="btn primary" id="copyBtn">Copy</button>
+          <button class="btn primary" id="downloadBtn">Download .set</button>
+        </div>
+      </div>
+      <div class="tabbar" id="outputTabs"></div>
+      <pre id="output"><span class="placeholder">// Circuit parameter fill korle ekhane auto config generate hobe...</span></pre>
+    </div>
+
   </div>
 
-  <div class="card">
-    <h2>📄 Generated Configuration</h2>
-    <div class="tabs" id="tabs"></div>
-    <div class="out-header">
-      <div class="out-title"><span class="dot"></span><span id="outLabel">IIG Raw Commands (Standard Context):</span></div>
-      <button class="copy-btn" id="copyBtn">Copy Code</button>
-    </div>
-    <pre id="codeOut"></pre>
+  <div class="footnote">
+    <span>Order: Interface (desc/vlan/policer-output/address) &rarr; BGP group &rarr; Import policy &rarr; Firewall policer</span>
+    <span>Push korar age <span class="kbd">commit check</span> mandatory</span>
   </div>
 
 </div>
 
 <script>
-const GATEWAYS = [
-  {key:'iig',  label:'IIG',  short:'IIG',  unit:3528, bandwidth:'140m', logicalSys:'',          neighbor:'10.2.160.26',   accent:'#4fb3f5'},
-  {key:'ggc',  label:'GGC',  short:'GGC',  unit:3529, bandwidth:'900m', logicalSys:'GGC-R3',     neighbor:'172.19.101.26', accent:'#f5a742'},
-  {key:'fna',  label:'FNA',  short:'FNA',  unit:3530, bandwidth:'550m', logicalSys:'FNA-R3',     neighbor:'172.18.101.26', accent:'#7ee787'},
-  {key:'bdix', label:'BDIX', short:'BDIX', unit:3531, bandwidth:'570m', logicalSys:'BDIX-R2',    neighbor:'172.16.7.26',   accent:'#c297ff'},
-  {key:'cdn',  label:'CDN',  short:'CDN',  unit:3532, bandwidth:'40m',  logicalSys:'CDN-R2',     neighbor:'10.2.159.26',   accent:'#ff9ac2'},
-  {key:'bcdn', label:'BCDN', short:'BCDN', unit:3533, bandwidth:'200m', logicalSys:'BCDN-R2',    neighbor:'10.100.99.26',  accent:'#5eead4'},
-];
+(function(){
 
-function parseBw(str){
-  const m = String(str).trim().match(/^([\d.]+)\s*([kmg])?/i);
-  if (!m) return 0;
-  const val = parseFloat(m[1]);
-  const unit = (m[2] || 'm').toLowerCase();
-  if (unit === 'g') return val * 1000;
-  if (unit === 'k') return val / 1000;
-  return val;
-}
+  // ---- Service definitions (defaults derived from the Gokul-Nurullaganj-PoP sample) ----
+  const SERVICES = [
+    {
+      key: "IIG",
+      label: "IIG",
+      logicalSystem: null, // main instance
+      exportPolicy: "DEFAULT-ROUTE-EXPORT",
+      includeByDefault: true,
+      defaults: { unit: "1808", ownIp: "10.2.160.41/30", neighborIp: "10.2.160.42", localPref: true, bandwidth: "2080" }
+    },
+    {
+      key: "GGC",
+      label: "GGC (GGC-R3)",
+      logicalSystem: "GGC-R3",
+      exportPolicy: "FOR-EBGP-GGC-CLIENTS-EXPORT",
+      includeByDefault: true,
+      defaults: { unit: "1809", ownIp: "172.19.101.41/30", neighborIp: "172.19.101.42", localPref: true, bandwidth: "7000" }
+    },
+    {
+      key: "FNA",
+      label: "FNA (FNA-R3)",
+      logicalSystem: "FNA-R3",
+      exportPolicy: "FOR-EBGP-FNA-CLIENTS-EXPORT",
+      includeByDefault: true,
+      defaults: { unit: "1810", ownIp: "172.18.101.41/30", neighborIp: "172.18.101.42", localPref: true, bandwidth: "4050" }
+    },
+    {
+      key: "CDN",
+      label: "CDN (CDN-R2)",
+      logicalSystem: "CDN-R2",
+      exportPolicy: "FOR-EBGP-CDN-R2-Clients-EXPORT",
+      includeByDefault: true,
+      defaults: { unit: "1812", ownIp: "10.2.159.41/30", neighborIp: "10.2.159.42", localPref: true, bandwidth: "1010" }
+    },
+    {
+      key: "BDIX",
+      label: "BDIX (BDIX-R2)",
+      logicalSystem: "BDIX-R2",
+      exportPolicy: "FOR-EBGP-BDIX-CLIENTS-EXPORT",
+      includeByDefault: true,
+      defaults: { unit: "1811", ownIp: "172.16.7.41/30", neighborIp: "172.16.7.42", localPref: true, bandwidth: "5000" }
+    },
+    {
+      key: "BCDN",
+      label: "BCDN (BCDN-R2)",
+      logicalSystem: "BCDN-R2",
+      exportPolicy: "FOR-EBGP-BCDN-R2-Clients-EXPORT",
+      includeByDefault: true,
+      defaults: { unit: "1813", ownIp: "10.100.99.41/30", neighborIp: "10.100.99.42", localPref: true, bandwidth: "900" }
+    }
+  ];
 
-function formatBw(mbps){
-  if (mbps >= 1000) return (mbps/1000).toFixed(mbps % 1000 === 0 ? 0 : 1) + 'G';
-  return mbps.toFixed(mbps % 1 === 0 ? 0 : 1) + 'M';
-}
+  const servicesEl = document.getElementById("services");
+  const state = {};
 
-const gwGrid = document.getElementById('gwGrid');
-GATEWAYS.forEach((gw, i) => {
-  const card = document.createElement('div');
-  card.className = 'gw-card';
-  card.style.setProperty('--gw-accent', gw.accent);
-  card.dataset.gwKey = gw.key;
-  card.innerHTML = `
-    <div class="gw-head">
-      <h3>${i+1}. ${gw.label} Gateway</h3>
-      <span class="bw-badge" id="badge-${gw.key}">${gw.bandwidth}</span>
-    </div>
-    <div class="bw-bar-track"><div class="bw-bar-fill" id="bar-${gw.key}" style="width:0%"></div></div>
-    <label class="field"><span>Unit</span><input data-gw="${gw.key}" data-f="unit" value="${gw.unit}"></label>
-    <label class="field"><span>Bandwidth</span><input data-gw="${gw.key}" data-f="bandwidth" value="${gw.bandwidth}"></label>
-    <label class="field"><span>Logical Sys</span><input data-gw="${gw.key}" data-f="logicalSys" value="${gw.logicalSys}" placeholder="None"></label>
-    <label class="field"><span>Neighbor IP</span><input data-gw="${gw.key}" data-f="neighbor" value="${gw.neighbor}"></label>
-  `;
-  gwGrid.appendChild(card);
-});
+  SERVICES.forEach(svc => {
+    state[svc.key] = {
+      on: svc.includeByDefault,
+      unit: svc.defaults.unit,
+      ownIp: svc.defaults.ownIp,
+      neighborIp: svc.defaults.neighborIp,
+      logicalSystem: svc.logicalSystem || "",
+      bandwidth: svc.defaults.bandwidth || ""
+    };
 
-function updateBandwidthUI(){
-  const values = GATEWAYS.map(gw => {
-    const inp = document.querySelector(`input[data-gw="${gw.key}"][data-f="bandwidth"]`);
-    return parseBw(inp ? inp.value : gw.bandwidth);
+    const card = document.createElement("div");
+    card.className = "svc" + (svc.includeByDefault ? " on" : "");
+    card.dataset.key = svc.key;
+
+    card.innerHTML = `
+      <div class="svc-head">
+        <span class="name">${svc.label}</span>
+        <span style="display:flex; align-items:center; gap:8px;">
+          <span class="svc-tag">${svc.logicalSystem ? svc.logicalSystem : "main"}</span>
+          <span class="switch"></span>
+        </span>
+      </div>
+      <div class="svc-body">
+        <div class="field-row">
+          <div class="field">
+            <label>Logical System</label>
+            <input data-f="logicalSystem" value="${svc.logicalSystem ? svc.logicalSystem : ""}" placeholder="khali rakhle main instance">
+          </div>
+          <div class="field">
+            <label>VLAN / Unit ID</label>
+            <input data-f="unit" value="${svc.defaults.unit}">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Layer3 IP (own /30)</label>
+            <input data-f="ownIp" value="${svc.defaults.ownIp}">
+          </div>
+          <div class="field">
+            <label>Your IP (neighbor)</label>
+            <input data-f="neighborIp" value="${svc.defaults.neighborIp}">
+          </div>
+        </div>
+        <div class="field-row single">
+          <div class="field">
+            <label>Policer Bandwidth (Mbps)</label>
+            <input data-f="bandwidth" value="${svc.defaults.bandwidth || ""}" placeholder="e.g. 1000">
+          </div>
+        </div>
+      </div>
+    `;
+
+    card.querySelector(".svc-head").addEventListener("click", () => {
+      card.classList.toggle("on");
+      state[svc.key].on = card.classList.contains("on");
+      render();
+    });
+
+    card.querySelectorAll("input[data-f]").forEach(inp => {
+      inp.addEventListener("click", e => e.stopPropagation());
+      inp.addEventListener("input", () => {
+        state[svc.key][inp.dataset.f] = inp.value.trim();
+        if(inp.dataset.f === "logicalSystem"){
+          const tag = card.querySelector(".svc-tag");
+          tag.textContent = inp.value.trim() ? inp.value.trim() : "main";
+        }
+        render();
+      });
+    });
+
+    servicesEl.appendChild(card);
   });
-  const max = Math.max(...values, 1);
-  let total = 0;
-  GATEWAYS.forEach((gw, i) => {
-    const mbps = values[i];
-    total += mbps;
-    const badge = document.getElementById(`badge-${gw.key}`);
-    const bar = document.getElementById(`bar-${gw.key}`);
-    const inp = document.querySelector(`input[data-gw="${gw.key}"][data-f="bandwidth"]`);
-    if (badge) badge.textContent = inp ? inp.value : gw.bandwidth;
-    if (bar) bar.style.width = Math.max(4, (mbps / max) * 100) + '%';
-  });
-  const statBw = document.getElementById('statBw');
-  const statActive = document.getElementById('statActive');
-  if (statBw) statBw.textContent = ' ' + formatBw(total);
-  if (statActive) statActive.textContent = GATEWAYS.length;
-}
 
-const tabsEl = document.getElementById('tabs');
-GATEWAYS.forEach((gw, i) => {
-  const btn = document.createElement('button');
-  btn.className = 'tab-btn' + (i === 0 ? ' active' : '');
-  btn.textContent = gw.label + ' Config';
-  btn.dataset.key = gw.key;
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    activeKey = gw.key;
+  // ---- Inputs ----
+  const custNameEl = document.getElementById("custName");
+  const clientBlockEl = document.getElementById("clientBlock");
+  const peerAsEl = document.getElementById("peerAs");
+  const localAsEl = document.getElementById("localAs");
+  const localPrefEl = document.getElementById("localPref");
+  const burstSizeEl = document.getElementById("burstSize");
+  const ifaceNameEl = document.getElementById("ifaceName");
+
+  [custNameEl, clientBlockEl, peerAsEl, localAsEl, localPrefEl, burstSizeEl, ifaceNameEl].forEach(el => {
+    el.addEventListener("input", render);
+  });
+
+  function esc(s){
+    return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
+  function line(text){
+    const parts = text.split(" ");
+    let html = `<span class="ln-set">set</span> `;
+    html += `<span class="ln-path">${esc(parts.slice(1).join(" "))}</span>`;
+    return html + "\n";
+  }
+
+  function buildGroupHeader(text){
+    return `<span class="grp-header">${esc(text)}</span>`;
+  }
+
+  function buildSubHeader(text){
+    return `<span class="sub-header">${esc(text)}</span>`;
+  }
+
+  let activeTab = "ALL";
+  let blocksCache = {}; // key -> html string (only for currently-on services)
+
+  function renderTabs(onKeys){
+    const bar = document.getElementById("outputTabs");
+    if(onKeys.length === 0){ bar.innerHTML = ""; return; }
+
+    let html = `<button class="tab ${activeTab === 'ALL' ? 'active' : ''}" data-tab="ALL"><span class="n">${onKeys.length}</span>ALL</button>`;
+    SERVICES.forEach((svc, i) => {
+      if(onKeys.indexOf(svc.key) === -1) return;
+      html += `<button class="tab ${activeTab === svc.key ? 'active' : ''}" data-tab="${svc.key}"><span class="n">0${i+1}</span>${svc.key}</button>`;
+    });
+    bar.innerHTML = html;
+
+    bar.querySelectorAll(".tab").forEach(btn => {
+      btn.addEventListener("click", () => {
+        activeTab = btn.dataset.tab;
+        paintOutput();
+      });
+    });
+  }
+
+  function paintOutput(){
+    const onKeys = SERVICES.filter(s => state[s.key].on).map(s => s.key);
+    if(onKeys.length === 0){
+      document.getElementById("output").innerHTML = '<span class="placeholder">// Circuit parameter fill korle ekhane auto config generate hobe...</span>';
+      return;
+    }
+    if(activeTab !== "ALL" && onKeys.indexOf(activeTab) === -1) activeTab = "ALL";
+
+    let html = "";
+    if(activeTab === "ALL"){
+      onKeys.forEach(k => { html += blocksCache[k]; });
+    } else {
+      html = blocksCache[activeTab] || "";
+    }
+    document.getElementById("output").innerHTML = html.trim() ? html : '<span class="placeholder">// Circuit parameter fill korle ekhane auto config generate hobe...</span>';
+  }
+
+  function render(){
+    const name = (custNameEl.value || "").trim().replace(/\s+/g, "-");
+    const clientBlock = clientBlockEl.value.trim();
+    const peerAs = peerAsEl.value.trim();
+    const localAs = localAsEl.value.trim();
+    const localPref = localPrefEl.value.trim();
+    const burstSize = burstSizeEl.value.trim();
+    const ifaceName = ifaceNameEl.value.trim();
+
+    const onKeys = SERVICES.filter(s => state[s.key].on).map(s => s.key);
+
+    if(!name && !clientBlock && onKeys.length === 0){
+      renderTabs([]);
+      document.getElementById("output").innerHTML = '<span class="placeholder">// Circuit parameter fill korle ekhane auto config generate hobe...</span>';
+      return;
+    }
+
+    const N = name || "Customer-Name";
+    const CB_LIST = clientBlock
+      .split(/[\n,]+/)
+      .map(v => v.trim())
+      .filter(Boolean);
+    const CBS = CB_LIST.length ? CB_LIST : ["0.0.0.0/30"];
+    const PAS = peerAs || "65000";
+    const LAS = localAs || "0";
+    const LP = localPref || "1500";
+    const BURST = burstSize || "5";
+    const IFACE = ifaceName || "ae0";
+
+    blocksCache = {};
+
+    SERVICES.forEach(svc => {
+      const s = state[svc.key];
+      if(!s.on) return;
+
+      const ls = (s.logicalSystem || "").trim();
+      const prefix = ls ? `logical-systems ${ls} ` : "";
+      const groupName = `${N}-${svc.key}`;
+      const importPolicy = `${groupName}-IMPORT`;
+      const community = `${svc.key}-BGP-CLIENTS-IMPORT`;
+      const unit = s.unit || "0";
+      const ownIp = s.ownIp || "0.0.0.0/30";
+      const bw = (s.bandwidth || "").trim();
+
+      let out = "";
+      out += buildGroupHeader(`${svc.label} \u2014 ${ls ? ls : "main instance"}`);
+
+      // Interface
+      out += buildSubHeader("interface");
+      out += line(`${prefix}interfaces ${IFACE} unit ${unit} description ${groupName}`);
+      out += line(`${prefix}interfaces ${IFACE} unit ${unit} vlan-id ${unit}`);
+      if(bw){
+        out += line(`${prefix}interfaces ${IFACE} unit ${unit} family inet policer output ${groupName}`);
+      }
+      out += line(`${prefix}interfaces ${IFACE} unit ${unit} family inet address ${ownIp}`);
+
+      // BGP group
+      out += buildSubHeader("bgp group");
+      out += line(`${prefix}protocols bgp group ${groupName} type external`);
+      out += line(`${prefix}protocols bgp group ${groupName} description ${groupName}`);
+      out += line(`${prefix}protocols bgp group ${groupName} import ${importPolicy}`);
+      out += line(`${prefix}protocols bgp group ${groupName} export ${svc.exportPolicy}`);
+      out += line(`${prefix}protocols bgp group ${groupName} peer-as ${PAS}`);
+      out += line(`${prefix}protocols bgp group ${groupName} local-as ${LAS}`);
+      out += line(`${prefix}protocols bgp group ${groupName} neighbor ${s.neighborIp || "0.0.0.0"}`);
+
+      // Import policy
+      out += buildSubHeader("import policy");
+      CBS.forEach(cb => {
+        out += line(`${prefix}policy-options policy-statement ${importPolicy} term 1 from route-filter ${cb} exact`);
+      });
+      if(svc.defaults.localPref){
+        out += line(`${prefix}policy-options policy-statement ${importPolicy} term 1 then local-preference ${LP}`);
+      }
+      out += line(`${prefix}policy-options policy-statement ${importPolicy} term 1 then community add ${community}`);
+      out += line(`${prefix}policy-options policy-statement ${importPolicy} term 1 then accept`);
+      out += line(`${prefix}policy-options policy-statement ${importPolicy} term 100 then reject`);
+
+      // Firewall policer (global hierarchy, no logical-systems prefix)
+      if(bw){
+        out += buildSubHeader("firewall policer");
+        out += line(`firewall policer ${groupName} shared-bandwidth-policer`);
+        out += line(`firewall policer ${groupName} if-exceeding bandwidth-limit ${bw}m`);
+        out += line(`firewall policer ${groupName} if-exceeding burst-size-limit ${BURST}m`);
+        out += line(`firewall policer ${groupName} then discard`);
+      }
+
+      out += "\n";
+
+      blocksCache[svc.key] = out;
+    });
+
+    renderTabs(onKeys);
+    paintOutput();
+  }
+
+  // ---- Toolbar actions ----
+  document.getElementById("clearBtn").addEventListener("click", () => {
+    custNameEl.value = "";
+    clientBlockEl.value = "";
+    peerAsEl.value = "";
+    localAsEl.value = "";
+    localPrefEl.value = "";
+    burstSizeEl.value = "";
+    ifaceNameEl.value = "";
     render();
   });
-  tabsEl.appendChild(btn);
-});
 
-let activeKey = 'iig';
-
-function decrementLastOctet(ip){
-  const parts = ip.trim().split('.');
-  if (parts.length !== 4) return ip;
-  let last = parseInt(parts[3], 10);
-  if (isNaN(last)) return ip;
-  last = last - 1;
-  if (last < 0) last = 0;
-  parts[3] = String(last);
-  return parts.join('.');
-}
-
-function readGlobals(){
-  return {
-    iface: document.getElementById('g_iface').value.trim() || 'ae0',
-    suffix: document.getElementById('g_suffix').value.trim(),
-    peerAs: document.getElementById('g_peeras').value.trim(),
-    localAs: document.getElementById('g_localas').value.trim(),
-    burst: document.getElementById('g_burst').value.trim(),
-  };
-}
-
-function readGateway(key){
-  const base = GATEWAYS.find(g => g.key === key);
-  const inputs = document.querySelectorAll(`input[data-gw="${key}"]`);
-  const gw = {...base};
-  inputs.forEach(inp => { gw[inp.dataset.f] = inp.value.trim(); });
-  return gw;
-}
-
-function readFilters(){
-  return document.getElementById('routeFilters').value
-    .split('\n')
-    .map(l => l.trim())
-    .filter(l => l.length > 0);
-}
-
-function buildConfig(gw, globals, filters){
-  const groupName = `${globals.suffix}-${gw.short}`;
-  const importPolicy = `${groupName}-IMPORT`;
-  const community = `${gw.short}-BGP-CLIENTS-IMPORT`;
-  const hasLS = gw.logicalSys && gw.logicalSys.toLowerCase() !== 'none' && gw.logicalSys !== '';
-  const lsPrefix = hasLS ? `logical-systems ${gw.logicalSys} ` : '';
-  const exportPolicy = hasLS ? `FOR-EBGP-${gw.logicalSys}-Clients-EXPORT` : 'DEFAULT-ROUTE-EXPORT';
-  const localIp = decrementLastOctet(gw.neighbor);
-  const unit = gw.unit;
-
-  const lines = [];
-  lines.push(`set ${lsPrefix}interfaces ${globals.iface} unit ${unit} description ${groupName}`);
-  lines.push(`set ${lsPrefix}interfaces ${globals.iface} unit ${unit} vlan-id ${unit}`);
-  lines.push(`set ${lsPrefix}interfaces ${globals.iface} unit ${unit} family inet address ${localIp}/30`);
-  if (!hasLS){
-    lines.push(`set interfaces ${globals.iface} unit ${unit} family inet policer output ${groupName}`);
-  }
-  lines.push(`set ${lsPrefix}protocols bgp group ${groupName} type external`);
-  lines.push(`set ${lsPrefix}protocols bgp group ${groupName} description ${groupName}`);
-  lines.push(`set ${lsPrefix}protocols bgp group ${groupName} import ${importPolicy}`);
-  lines.push(`set ${lsPrefix}protocols bgp group ${groupName} export ${exportPolicy}`);
-  lines.push(`set ${lsPrefix}protocols bgp group ${groupName} peer-as ${globals.peerAs}`);
-  lines.push(`set ${lsPrefix}protocols bgp group ${groupName} local-as ${globals.localAs}`);
-  lines.push(`set ${lsPrefix}protocols bgp group ${groupName} neighbor ${gw.neighbor}`);
-  filters.forEach(f => {
-    lines.push(`set ${lsPrefix}policy-options policy-statement ${importPolicy} term 1 from route-filter ${f}`);
+  document.getElementById("copyBtn").addEventListener("click", () => {
+    const text = document.getElementById("output").innerText;
+    if(!text || text.indexOf("Circuit parameter") !== -1) return;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById("copyBtn");
+      const original = btn.textContent;
+      btn.textContent = "Copied";
+      btn.classList.add("copied");
+      setTimeout(() => { btn.textContent = original; btn.classList.remove("copied"); }, 1400);
+    });
   });
-  lines.push(`set ${lsPrefix}policy-options policy-statement ${importPolicy} term 1 then local-preference 1500`);
-  lines.push(`set ${lsPrefix}policy-options policy-statement ${importPolicy} term 1 then community add ${community}`);
-  lines.push(`set ${lsPrefix}policy-options policy-statement ${importPolicy} term 1 then accept`);
-  lines.push(`set ${lsPrefix}policy-options policy-statement ${importPolicy} term 100 then reject`);
-  lines.push(`set firewall policer ${groupName} if-exceeding bandwidth-limit ${gw.bandwidth}`);
-  lines.push(`set firewall policer ${groupName} if-exceeding burst-size-limit ${globals.burst}`);
-  lines.push(`set firewall policer ${groupName} then discard`);
 
-  return lines.join('\n');
-}
-
-const KEYWORDS = ['set','interfaces','unit','description','vlan-id','family','inet','address','policer','output',
-  'protocols','bgp','group','type','external','import','export','peer-as','local-as','neighbor',
-  'policy-options','policy-statement','term','from','route-filter','exact','then','local-preference','community','add',
-  'accept','reject','firewall','if-exceeding','bandwidth-limit','burst-size-limit','discard','logical-systems'];
-
-const TOKEN_RE = new RegExp(
-  '(\\d{1,3}(?:\\.\\d{1,3}){3}(?:/\\d{1,2})?)' +          // ip / cidr
-  '|(\\d+(?:\\.\\d+)?[mgk])' +                              // bandwidth-style value
-  '|(\\b(?:' + KEYWORDS.join('|') + ')\\b)' +               // keywords
-  '|(\\d+)',                                                // plain numbers
-  'gi'
-);
-
-function highlight(text){
-  const escaped = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  return escaped.replace(TOKEN_RE, (match, ip, bw, kw, num) => {
-    if (ip) return `<span class="ip">${ip}</span>`;
-    if (bw) return `<span class="bw">${bw}</span>`;
-    if (kw) return `<span class="kw">${kw}</span>`;
-    if (num) return `<span class="num">${num}</span>`;
-    return match;
+  document.getElementById("downloadBtn").addEventListener("click", () => {
+    const text = document.getElementById("output").innerText;
+    if(!text || text.indexOf("Circuit parameter") !== -1) return;
+    const name = (custNameEl.value || "client-config").trim().replace(/\s+/g, "-");
+    const suffix = activeTab === "ALL" ? "" : `-${activeTab}`;
+    const blob = new Blob([text], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${name}${suffix}.set`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   });
-}
 
-const RF_LINE_RE = /^\d{1,3}(?:\.\d{1,3}){3}\/\d{1,2}\s+exact$/i;
-
-function updateRouteFilterUI(){
-  const ta = document.getElementById('routeFilters');
-  const gutter = document.getElementById('rfGutter');
-  const status = document.getElementById('rfStatus');
-  const lines = ta.value.split('\n');
-  gutter.textContent = lines.map((_, i) => i + 1).join('\n');
-  gutter.scrollTop = ta.scrollTop;
-  status.innerHTML = lines.map((line, i) => {
-    const trimmed = line.trim();
-    if (trimmed === '') return '';
-    const ok = RF_LINE_RE.test(trimmed);
-    return `<span class="${ok ? 'ok' : 'bad'}">Line ${i+1}: ${ok ? 'valid route-filter' : 'invalid format — expected "a.b.c.d/nn exact"'}</span>`;
-  }).filter(Boolean).join('');
-}
-
-const rfTextarea = document.getElementById('routeFilters');
-rfTextarea.addEventListener('scroll', () => {
-  document.getElementById('rfGutter').scrollTop = rfTextarea.scrollTop;
-});
-
-function render(){
-  const globals = readGlobals();
-  const filters = readFilters();
-  const gw = readGateway(activeKey);
-  const cfg = buildConfig(gw, globals, filters);
-  document.getElementById('outLabel').textContent = `${gw.label} Raw Commands (Standard Context):`;
-  document.getElementById('codeOut').innerHTML = highlight(cfg);
-  updateBandwidthUI();
-  updateRouteFilterUI();
-}
-
-document.addEventListener('input', (e) => {
-  if (e.target.closest('.card')) render();
-});
-
-document.getElementById('copyBtn').addEventListener('click', () => {
-  const text = document.getElementById('codeOut').innerText;
-  navigator.clipboard.writeText(text).then(() => {
-    const btn = document.getElementById('copyBtn');
-    const original = btn.textContent;
-    btn.textContent = 'Copied!';
-    btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1500);
-  });
-});
-
-document.getElementById('themeToggle').addEventListener('click', () => {
-  const body = document.body;
-  const isDark = body.getAttribute('data-theme') === 'dark';
-  body.setAttribute('data-theme', isDark ? 'light' : 'dark');
-  document.getElementById('themeToggle').textContent = isDark ? '🌙 Dark Mode' : '☀️ Light Mode';
-});
-
-render();
+  render();
+})();
 </script>
 
 </body>
