@@ -3,915 +3,487 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JUNOS Client Provisioning Console</title>
+<title>Client Provisioning Console</title>
 <style>
   :root{
-    --bg: #0c0f0a;
-    --bg2: #12160f;
-    --panel: #14180f;
-    --line: #2a3320;
-    --amber: #ffb32e;
-    --amber-dim: #a8752a;
-    --amber-bright: #ffd479;
-    --green: #7ee27e;
-    --red: #ff6b5e;
-    --text: #d9d3b8;
-    --text-dim: #7d7a61;
-    --mono: "IBM Plex Mono", "Cascadia Code", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --bg:#0a0904;
+    --panel:#0d0c07;
+    --panel-2:#000000;
+    --border:#2e2a1c;
+    --text:#e9e2c9;
+    --muted:#8a8570;
+    --label:#e0a53f;
+    --accent:#e8a33d;
+    --accent-dim:#c98a3a;
+    --green:#7bc98f;
+    --code:#d8c48f;
+    --gold:#f0b429;
+    --danger:#ff6b6b;
+    --input-bg:#000000;
+    --track:#1c1a10;
   }
-
-  *{ box-sizing:border-box; }
-
-  html,body{
-    margin:0; padding:0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--mono);
-    min-height:100vh;
-  }
-
+  *{box-sizing:border-box;}
   body{
-    background-image:
-      radial-gradient(ellipse at top, rgba(255,179,46,0.05), transparent 60%),
-      repeating-linear-gradient(0deg, rgba(255,179,46,0.018) 0px, rgba(255,179,46,0.018) 1px, transparent 1px, transparent 3px);
+    margin:0;background:var(--bg);color:var(--text);
+    font-family:"JetBrains Mono","Fira Code",Consolas,Menlo,monospace;
+    padding-bottom:60px;
   }
-
-  .crt-frame{
-    max-width: 1320px;
-    margin: 0 auto;
-    padding: 28px 20px 60px;
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 28px;border-bottom:1px solid var(--border);
+    background:var(--panel);flex-wrap:wrap;gap:12px;
   }
-
-  /* ---------- Header ---------- */
-  .topbar{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    border-bottom: 1px solid var(--line);
-    padding-bottom: 14px;
-    margin-bottom: 22px;
-    flex-wrap: wrap;
-    gap: 10px;
+  .brand{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;}
+  .dot-header{
+    width:8px;height:8px;border-radius:50%;background:var(--accent);
+    display:inline-block;box-shadow:0 0 8px var(--accent);margin-right:6px;
   }
-
-  .brand{
-    display:flex;
-    align-items:baseline;
-    gap: 12px;
+  header h1{
+    font-size:16px;margin:0;letter-spacing:2px;color:var(--text);
+    display:inline;font-weight:700;
   }
-
-  .brand .dot{
-    width:9px; height:9px;
-    background: var(--amber);
-    box-shadow: 0 0 8px 2px rgba(255,179,46,0.7);
-    border-radius: 50%;
-    display:inline-block;
-    animation: pulse 2.2s ease-in-out infinite;
+  .subtitle{font-size:11.5px;color:var(--muted);letter-spacing:0.3px;}
+  .live-badge{
+    border:1px solid var(--accent);color:var(--accent);
+    padding:5px 12px;border-radius:4px;font-size:11px;
+    letter-spacing:1.5px;font-weight:700;
   }
-
-  @keyframes pulse{
-    0%,100%{ opacity:1; }
-    50%{ opacity:0.35; }
+  .wrap{max-width:1200px;margin:0 auto;padding:24px;}
+  .card{
+    background:var(--panel);border:1px solid var(--border);
+    border-radius:4px;padding:22px 24px;margin-bottom:22px;
   }
-
-  .brand h1{
-    font-size: 15px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin:0;
-    color: var(--amber-bright);
-    font-weight: 600;
+  .card h2{
+    font-size:11.5px;color:var(--muted);letter-spacing:2px;
+    margin:0 0 18px 0;font-weight:700;
+    border-bottom:1px solid var(--border);padding-bottom:14px;
   }
-
-  .brand .sub{
-    color: var(--text-dim);
-    font-size: 11.5px;
-    letter-spacing: 1px;
+  label.field{display:flex;flex-direction:column;gap:7px;margin-bottom:16px;}
+  label.field:last-child{margin-bottom:0;}
+  label.field span{
+    font-size:11px;letter-spacing:1px;color:var(--label);
+    text-transform:uppercase;font-weight:600;
   }
-
-  .status-chip{
-    font-size: 11px;
-    letter-spacing: 1.5px;
-    color: var(--bg);
-    background: var(--amber);
-    padding: 4px 10px;
-    text-transform: uppercase;
+  input, textarea{
+    background:var(--input-bg);border:1px solid var(--border);
+    color:var(--text);padding:10px 12px;border-radius:3px;
+    font-size:13px;font-family:inherit;width:100%;
   }
-
-  /* ---------- Layout ---------- */
-  .grid{
-    display:grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-    align-items: start;
+  input::placeholder, textarea::placeholder{color:#4a4636;}
+  input:focus, textarea:focus{outline:none;border-color:var(--accent);}
+  textarea{min-height:64px;resize:vertical;}
+  .help{font-size:11px;color:var(--muted);line-height:1.5;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+  .section-divider{
+    display:flex;align-items:center;gap:14px;margin:26px 0 18px 0;
   }
-
-  .panel{
-    background: var(--panel);
-    border: 1px solid var(--line);
-    position: relative;
+  .section-divider::before, .section-divider::after{
+    content:'';flex:1;height:1px;background:var(--border);
   }
-
-  .panel::before{
-    content:"";
-    position:absolute; top:0; left:0; right:0; height:2px;
-    background: linear-gradient(90deg, transparent, var(--amber-dim), transparent);
-    opacity:0.6;
+  .section-divider span{
+    font-size:11.5px;color:var(--muted);letter-spacing:2px;font-weight:700;
   }
-
-  .panel-head{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding: 10px 16px;
-    border-bottom: 1px solid var(--line);
-    background: var(--bg2);
+  .gw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  @media (max-width:860px){.gw-grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:560px){.gw-grid{grid-template-columns:1fr;}}
+  .gw-card{
+    background:var(--panel-2);border:1px solid var(--border);
+    border-radius:4px;padding:16px;
   }
-
-  .panel-head h2{
-    font-size: 11px;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin:0;
-    font-weight: 600;
+  .gw-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .gw-head-left{display:flex;align-items:center;gap:8px;}
+  .gw-head h3{margin:0;font-size:13px;color:var(--text);font-weight:700;}
+  .ls-badge{
+    font-size:10px;color:var(--green);border:1px solid var(--green);
+    padding:2px 7px;border-radius:3px;letter-spacing:0.5px;
   }
-
-  .panel-body{ padding: 16px; }
-
-  /* ---------- Form ---------- */
-  .field-row{
-    display:grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 10px;
+  .toggle{
+    width:34px;height:18px;border-radius:10px;background:var(--track);
+    border:1px solid var(--border);position:relative;cursor:pointer;flex-shrink:0;
   }
-  .field-row.single{ grid-template-columns: 1fr; }
-
-  .field{ margin-bottom: 14px; }
-
-  .field label{
-    display:block;
-    font-size: 10.5px;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-    color: var(--amber-dim);
-    margin-bottom: 5px;
+  .toggle .knob{
+    width:12px;height:12px;border-radius:50%;background:var(--muted);
+    position:absolute;top:2px;left:2px;transition:left .15s, background .15s;
   }
-
-  .field input, .field select{
-    width: 100%;
-    background: #0a0d08;
-    border: 1px solid var(--line);
-    color: var(--amber-bright);
-    font-family: var(--mono);
-    font-size: 13px;
-    padding: 8px 9px;
-    outline: none;
-    transition: border-color .15s ease, box-shadow .15s ease;
+  .toggle.on{background:rgba(232,163,61,0.18);border-color:var(--accent);}
+  .toggle.on .knob{left:18px;background:var(--accent);}
+  .gw-card.disabled{opacity:0.4;}
+  .gw-card .field{margin-bottom:12px;}
+  .gw-card .field:last-child{margin-bottom:0;}
+  .gw-row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+  .out-toolbar{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:16px;flex-wrap:wrap;gap:10px;
   }
-
-  .field input::placeholder{ color: #4a4735; }
-
-  .field input:focus, .field select:focus{
-    border-color: var(--amber);
-    box-shadow: 0 0 0 1px rgba(255,179,46,0.25);
+  .out-toolbar h2{margin:0;border:none;padding:0;}
+  .toolbar-btns{display:flex;gap:8px;}
+  .ghost-btn{
+    background:transparent;border:1px solid var(--border);color:var(--text);
+    padding:7px 14px;border-radius:3px;font-size:11px;letter-spacing:0.5px;
+    cursor:pointer;font-family:inherit;font-weight:600;
   }
-
-  .field .hint{
-    font-size: 10px;
-    color: var(--text-dim);
-    margin-top: 4px;
-  }
-
-  .hr-label{
-    display:flex;
-    align-items:center;
-    gap: 8px;
-    margin: 18px 0 12px;
-    color: var(--text-dim);
-    font-size: 10.5px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-  .hr-label::before, .hr-label::after{
-    content:"";
-    flex:1;
-    height:1px;
-    background: var(--line);
-  }
-
-  /* Service toggle cards */
-  #services{
-    display:grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 10px;
-    align-items: start;
-  }
-
-  .svc{
-    border: 1px solid var(--line);
-    margin-bottom: 0;
-    background: #0a0d08;
-  }
-
-  .svc-head{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding: 9px 11px;
-    cursor:pointer;
-    user-select:none;
-  }
-
-  .svc-head .name{
-    display:flex;
-    align-items:center;
-    gap:9px;
-    font-size: 12px;
-    letter-spacing: 1px;
-    color: var(--text);
-  }
-
-  .svc-tag{
-    font-size: 9.5px;
-    padding: 1px 6px;
-    border: 1px solid var(--line);
-    color: var(--text-dim);
-    letter-spacing: 1px;
-  }
-
-  .svc.on .svc-tag{ color: var(--green); border-color: var(--green); }
-  .svc.on .svc-head .name{ color: var(--amber-bright); }
-
-  .switch{
-    position:relative;
-    width: 34px; height: 18px;
-    background:#1c2116;
-    border: 1px solid var(--line);
-    flex-shrink:0;
-  }
-  .switch::after{
-    content:"";
-    position:absolute;
-    top:2px; left:2px;
-    width:12px; height:12px;
-    background: var(--text-dim);
-    transition: all .15s ease;
-  }
-  .svc.on .switch{ border-color: var(--amber); }
-  .svc.on .switch::after{
-    left: 18px;
-    background: var(--amber);
-    box-shadow: 0 0 6px rgba(255,179,46,0.6);
-  }
-
-  .svc-body{
-    padding: 0 11px;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height .2s ease, padding .2s ease;
-  }
-  .svc.on .svc-body{
-    max-height: 500px;
-    padding: 4px 11px 12px;
-  }
-
-  .svc-body .field-row{ grid-template-columns: 1fr 1fr; }
-  .svc-body .field{ margin-bottom: 10px; }
-  .svc-body .field label{ font-size: 9.5px; }
-  .svc-body .field input{ font-size: 12px; padding: 6px 8px; }
-
-  /* ---------- Output ---------- */
-  .output-tools{
-    display:flex;
-    gap: 8px;
+  .ghost-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .ghost-btn.primary{border-color:var(--accent);color:var(--accent);}
+  .tabs{
+    display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;
     align-items:center;
   }
-
-  .btn{
-    background: transparent;
-    border: 1px solid var(--line);
-    color: var(--text-dim);
-    font-family: var(--mono);
-    font-size: 10.5px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    padding: 6px 12px;
-    cursor: pointer;
-    transition: all .15s ease;
+  .tab-btn{
+    background:transparent;border:1px solid var(--border);color:var(--muted);
+    padding:7px 13px;border-radius:3px;font-size:11px;letter-spacing:0.5px;
+    cursor:pointer;font-family:inherit;font-weight:600;
   }
-
-  .btn:hover{
-    border-color: var(--amber);
-    color: var(--amber-bright);
+  .tab-btn:hover{color:var(--text);}
+  .tab-btn.active{background:var(--accent);border-color:var(--accent);color:#1a1204;}
+  .tab-btn.sheet{border-color:var(--green);color:var(--green);margin-left:auto;}
+  .tab-btn.sheet.active{background:var(--green);color:#04180a;}
+  .tab-btn.gw-disabled{opacity:0.4;}
+  pre#codeOut{
+    background:var(--panel-2);border:1px solid var(--border);border-radius:4px;
+    padding:20px 22px;font-size:12.5px;line-height:1.7;color:var(--code);
+    overflow:auto;white-space:pre;margin:0;max-height:560px;
   }
-
-  .btn.primary{
-    border-color: var(--amber-dim);
-    color: var(--amber);
-  }
-  .btn.primary:hover{
-    background: var(--amber);
-    color: #14180f;
-  }
-
-  .btn.copied{
-    border-color: var(--green);
-    color: var(--green);
-  }
-
-  .tabbar{
-    display:flex;
-    flex-wrap: wrap;
-    gap: 2px;
-    padding: 10px 16px 0;
-    background: var(--bg2);
-    border-bottom: 1px solid var(--line);
-  }
-
-  .tab{
-    background: transparent;
-    border: 1px solid var(--line);
-    border-bottom: none;
-    color: var(--text-dim);
-    font-family: var(--mono);
-    font-size: 10.5px;
-    letter-spacing: 1.3px;
-    text-transform: uppercase;
-    padding: 7px 13px;
-    cursor: pointer;
-    margin-bottom: -1px;
-    transition: all .15s ease;
-  }
-
-  .tab:hover{ color: var(--amber-bright); }
-
-  .tab.active{
-    color: var(--amber-bright);
-    border-color: var(--amber-dim);
-    background: var(--panel);
-    box-shadow: inset 0 2px 0 var(--amber);
-  }
-
-  .tab .n{
-    color: var(--text-dim);
-    margin-right: 5px;
-    font-size: 9.5px;
-  }
-  .tab.active .n{ color: var(--amber); }
-
-  .tab.tab-client{
-    color: var(--green);
-    border-color: rgba(126,226,126,0.35);
-    margin-left: 6px;
-  }
-  .tab.tab-client.active{
-    color: var(--green);
-    border-color: var(--green);
-    box-shadow: inset 0 2px 0 var(--green);
-  }
-
-  #output{
-    margin:0;
-    padding: 18px 16px 24px;
-    font-size: 12.5px;
-    line-height: 1.75;
-    white-space: pre-wrap;
-    word-break: break-word;
-    min-height: 420px;
-    max-height: 74vh;
-    overflow-y: auto;
-  }
-
-  #output .ln-set{ color: var(--amber-dim); }
-  #output .ln-path{ color: var(--text); }
-  #output .ln-val{ color: var(--amber-bright); }
-  #output .grp-header{
-    display:block;
-    color: var(--green);
-    margin: 14px 0 6px;
-    letter-spacing: 1.5px;
-    font-size: 11px;
-    text-transform: uppercase;
-  }
-  #output .sub-header{
-    display:block;
-    color: var(--amber-dim);
-    margin: 10px 0 4px;
-    letter-spacing: 1.2px;
-    font-size: 10px;
-    text-transform: uppercase;
-  }
-  #output .grp-header:first-child{ margin-top: 0; }
-  #output .grp-header::before{ content:"# "; color: var(--text-dim); }
-  #output .sub-header::before{ content:"-- "; color: var(--line); }
-
-  #output .cs-block{ margin-bottom: 16px; display:block; }
-  #output .cs-title{
-    display:block;
-    color: var(--green);
-    font-size: 12.5px;
-    letter-spacing: 1.5px;
-    margin-bottom: 4px;
-  }
-  #output .cs-row{ display:block; }
-  #output .cs-label{ color: var(--text-dim); }
-  #output .cs-val{ color: var(--amber-bright); }
-  #output .cs-footer{
-    display:block;
-    margin-top: 6px;
-    padding-top: 12px;
-    border-top: 1px solid var(--line);
-  }
-
-  #output .placeholder{
-    color: var(--text-dim);
-    font-style: normal;
-  }
-
-  ::-webkit-scrollbar{ width: 9px; height:9px; }
-  ::-webkit-scrollbar-track{ background: var(--bg2); }
-  ::-webkit-scrollbar-thumb{ background: var(--line); }
-  ::-webkit-scrollbar-thumb:hover{ background: var(--amber-dim); }
-
-  .footnote{
-    margin-top: 16px;
-    font-size: 10.5px;
-    color: var(--text-dim);
-    letter-spacing: 0.5px;
-    display:flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .kbd{
-    border: 1px solid var(--line);
-    padding: 1px 5px;
-    color: var(--text-dim);
-  }
+  pre#codeOut .title{color:var(--gold);font-weight:700;}
+  pre#codeOut .label{color:var(--muted);letter-spacing:1px;}
+  pre#codeOut .kw{color:#e2b45f;}
+  pre#codeOut .sheet-gw{color:var(--green);font-weight:700;font-size:13.5px;}
+  pre#codeOut .sheet-label{color:var(--muted);}
+  pre#codeOut .sheet-value{color:var(--gold);font-weight:700;}
+  pre#codeOut::-webkit-scrollbar{width:8px;height:8px;}
+  pre#codeOut::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
 </style>
 </head>
 <body>
 
-<div class="crt-frame">
+<header>
+  <div class="brand">
+    <div><span class="dot-header"></span><h1>CLIENT PROVISIONING CONSOLE</h1></div>
+    <span class="subtitle">JUNOS · eBGP customer onboarding · interface + BGP + policy + policer</span>
+  </div>
+  <span class="live-badge">LIVE</span>
+</header>
 
-  <div class="topbar">
-    <div class="brand">
-      <span class="dot"></span>
-      <h1>Client Provisioning Console</h1>
-      <span class="sub">JUNOS &middot; eBGP customer onboarding &middot; interface + BGP + policy + policer</span>
+<div class="wrap">
+
+  <div class="card">
+    <h2>CIRCUIT PARAMETERS</h2>
+
+    <label class="field">
+      <span>POP / Customer Name</span>
+      <input id="g_name" placeholder="e.g. Gokul-Nurullaganj-PoP">
+      <span class="help">Ei naam-e group / policy / interface description toiri hobe (case jemon type korben temoni thakbe).</span>
+    </label>
+
+    <label class="field">
+      <span>Client Route Block / NAT IP (Route-filter)</span>
+      <textarea id="g_routes" placeholder="103.81.105.116/30&#10;103.81.105.120/30"></textarea>
+      <span class="help">Ekadhik NAT IP thakle notun line-e ba comma diye alada alada likhun — protyekta jonno alada route-filter line generate hobe.</span>
+    </label>
+
+    <div class="row2">
+      <label class="field"><span>Your AS (Customer / Peer-AS)</span><input id="g_peeras" placeholder="65001"></label>
+      <label class="field"><span>Layer3 AS (Router / Local-AS)</span><input id="g_localas" placeholder="136141"></label>
     </div>
-    <div class="status-chip">live</div>
+    <div class="row2">
+      <label class="field"><span>Local Preference</span><input id="g_localpref" placeholder="1500"></label>
+      <label class="field"><span>Policer Burst Size (Mbps)</span><input id="g_burst" placeholder="5"></label>
+    </div>
+
+    <label class="field"><span>Interface</span><input id="g_iface" value="ae0"></label>
   </div>
 
-  <div class="grid">
+  <div class="section-divider"><span>UPLINK SERVICES</span></div>
 
-    <!-- LEFT: FORM -->
-    <div class="panel">
-      <div class="panel-head">
-        <h2>Circuit Parameters</h2>
-      </div>
-      <div class="panel-body">
-
-        <div class="field">
-          <label for="custName">PoP / Customer Name</label>
-          <input id="custName" placeholder="e.g. Gokul-Nurullaganj-PoP" autocomplete="off">
-          <div class="hint">Ei naam-e group / policy / interface description toiri hobe (case jemon type korben temoni thakbe).</div>
-        </div>
-
-        <div class="field">
-          <label for="clientBlock">Client Route Block / NAT IP (route-filter)</label>
-          <textarea id="clientBlock" placeholder="103.81.105.116/30&#10;103.81.105.120/30" autocomplete="off" rows="2" style="width:100%; background:#0a0d08; border:1px solid var(--line); color:var(--amber-bright); font-family:var(--mono); font-size:13px; padding:8px 9px; outline:none; resize:vertical;"></textarea>
-          <div class="hint">Ekadhik NAT IP thakle notun line-e ba comma diye alada alada likhun — protyekta jonno alada route-filter line generate hobe.</div>
-        </div>
-
-        <div class="field-row">
-          <div class="field">
-            <label for="peerAs">Your AS (Customer / peer-as)</label>
-            <input id="peerAs" placeholder="65001" autocomplete="off">
-          </div>
-          <div class="field">
-            <label for="localAs">Layer3 AS (Router / local-as)</label>
-            <input id="localAs" placeholder="136141" autocomplete="off">
-          </div>
-        </div>
-
-        <div class="field-row">
-          <div class="field">
-            <label for="localPref">Local Preference</label>
-            <input id="localPref" placeholder="1500" autocomplete="off">
-          </div>
-          <div class="field">
-            <label for="burstSize">Policer Burst Size (Mbps)</label>
-            <input id="burstSize" placeholder="5" autocomplete="off">
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="ifaceName">Interface</label>
-          <input id="ifaceName" placeholder="ae0" autocomplete="off">
-        </div>
-
-        <div class="hr-label">Uplink Services</div>
-
-        <div id="services"></div>
-
-      </div>
-    </div>
-
-    <!-- RIGHT: OUTPUT -->
-    <div class="panel">
-      <div class="panel-head">
-        <h2>Generated set-commands</h2>
-        <div class="output-tools">
-          <button class="btn" id="clearBtn">Clear</button>
-          <button class="btn primary" id="copyBtn">Copy</button>
-          <button class="btn primary" id="downloadBtn">Download .set</button>
-        </div>
-      </div>
-      <div class="tabbar" id="outputTabs"></div>
-      <pre id="output"><span class="placeholder">// Circuit parameter fill korle ekhane auto config generate hobe...</span></pre>
-    </div>
-
+  <div class="card">
+    <div class="gw-grid" id="gwGrid"></div>
   </div>
 
-  <div class="footnote">
-    <span>Order: Interface (desc/vlan/policer-output/address) &rarr; BGP group &rarr; Import policy &rarr; Firewall policer</span>
-    <span>Push korar age <span class="kbd">commit check</span> mandatory</span>
+  <div class="card">
+    <div class="out-toolbar">
+      <h2>GENERATED SET-COMMANDS</h2>
+      <div class="toolbar-btns">
+        <button class="ghost-btn" id="clearBtn">CLEAR</button>
+        <button class="ghost-btn primary" id="copyBtn">COPY</button>
+        <button class="ghost-btn primary" id="downloadBtn">DOWNLOAD .SET</button>
+      </div>
+    </div>
+    <div class="tabs" id="tabs"></div>
+    <pre id="codeOut"></pre>
   </div>
 
 </div>
 
 <script>
-(function(){
+const GATEWAYS = [
+  {key:'iig',  label:'IIG',  short:'IIG',  unit:1808, bandwidth:'2080', logicalSys:'',          ownIp:'10.2.160.41/30',   neighbor:'10.2.160.42'},
+  {key:'ggc',  label:'GGC',  short:'GGC',  unit:1809, bandwidth:'7000', logicalSys:'GGC-R3',     ownIp:'172.19.101.41/30', neighbor:'172.19.101.42'},
+  {key:'fna',  label:'FNA',  short:'FNA',  unit:1810, bandwidth:'4050', logicalSys:'FNA-R3',     ownIp:'172.18.101.41/30', neighbor:'172.18.101.42'},
+  {key:'cdn',  label:'CDN',  short:'CDN',  unit:1812, bandwidth:'1010', logicalSys:'CDN-R2',     ownIp:'10.2.159.41/30',   neighbor:'10.2.159.42'},
+  {key:'bdix', label:'BDIX', short:'BDIX', unit:1811, bandwidth:'5000', logicalSys:'BDIX-R2',    ownIp:'172.16.7.41/30',   neighbor:'172.16.7.42'},
+  {key:'bcdn', label:'BCDN', short:'BCDN', unit:1813, bandwidth:'900',  logicalSys:'BCDN-R2',    ownIp:'10.100.99.41/30',  neighbor:'10.100.99.42'},
+];
 
-  // ---- Service definitions (defaults derived from the Gokul-Nurullaganj-PoP sample) ----
-  const SERVICES = [
-    {
-      key: "IIG",
-      label: "IIG",
-      logicalSystem: null, // main instance
-      exportPolicy: "DEFAULT-ROUTE-EXPORT",
-      includeByDefault: true,
-      defaults: { unit: "1808", ownIp: "10.2.160.41/30", neighborIp: "10.2.160.42", localPref: true, bandwidth: "2080" }
-    },
-    {
-      key: "GGC",
-      label: "GGC (GGC-R3)",
-      logicalSystem: "GGC-R3",
-      exportPolicy: "FOR-EBGP-GGC-CLIENTS-EXPORT",
-      includeByDefault: true,
-      defaults: { unit: "1809", ownIp: "172.19.101.41/30", neighborIp: "172.19.101.42", localPref: true, bandwidth: "7000" }
-    },
-    {
-      key: "FNA",
-      label: "FNA (FNA-R3)",
-      logicalSystem: "FNA-R3",
-      exportPolicy: "FOR-EBGP-FNA-CLIENTS-EXPORT",
-      includeByDefault: true,
-      defaults: { unit: "1810", ownIp: "172.18.101.41/30", neighborIp: "172.18.101.42", localPref: true, bandwidth: "4050" }
-    },
-    {
-      key: "CDN",
-      label: "CDN (CDN-R2)",
-      logicalSystem: "CDN-R2",
-      exportPolicy: "FOR-EBGP-CDN-R2-Clients-EXPORT",
-      includeByDefault: true,
-      defaults: { unit: "1812", ownIp: "10.2.159.41/30", neighborIp: "10.2.159.42", localPref: true, bandwidth: "1010" }
-    },
-    {
-      key: "BDIX",
-      label: "BDIX (BDIX-R2)",
-      logicalSystem: "BDIX-R2",
-      exportPolicy: "FOR-EBGP-BDIX-CLIENTS-EXPORT",
-      includeByDefault: true,
-      defaults: { unit: "1811", ownIp: "172.16.7.41/30", neighborIp: "172.16.7.42", localPref: true, bandwidth: "5000" }
-    },
-    {
-      key: "BCDN",
-      label: "BCDN (BCDN-R2)",
-      logicalSystem: "BCDN-R2",
-      exportPolicy: "FOR-EBGP-BCDN-R2-Clients-EXPORT",
-      includeByDefault: true,
-      defaults: { unit: "1813", ownIp: "10.100.99.41/30", neighborIp: "10.100.99.42", localPref: true, bandwidth: "900" }
-    }
-  ];
+const gwState = {};
+GATEWAYS.forEach(gw => { gwState[gw.key] = true; });
 
-  const servicesEl = document.getElementById("services");
-  const state = {};
-
-  SERVICES.forEach(svc => {
-    state[svc.key] = {
-      on: svc.includeByDefault,
-      unit: svc.defaults.unit,
-      ownIp: svc.defaults.ownIp,
-      neighborIp: svc.defaults.neighborIp,
-      logicalSystem: svc.logicalSystem || "",
-      bandwidth: svc.defaults.bandwidth || ""
-    };
-
-    const card = document.createElement("div");
-    card.className = "svc" + (svc.includeByDefault ? " on" : "");
-    card.dataset.key = svc.key;
-
-    card.innerHTML = `
-      <div class="svc-head">
-        <span class="name">${svc.label}</span>
-        <span style="display:flex; align-items:center; gap:8px;">
-          <span class="svc-tag">${svc.logicalSystem ? svc.logicalSystem : "main"}</span>
-          <span class="switch"></span>
-        </span>
+const gwGrid = document.getElementById('gwGrid');
+GATEWAYS.forEach((gw, i) => {
+  const card = document.createElement('div');
+  card.className = 'gw-card';
+  card.dataset.gwKey = gw.key;
+  card.innerHTML = `
+    <div class="gw-head">
+      <div class="gw-head-left">
+        <h3>${gw.label}${gw.logicalSys ? ` (${gw.logicalSys})` : ''}</h3>
+        <span class="ls-badge" id="badge-${gw.key}">${gw.logicalSys || 'main'}</span>
       </div>
-      <div class="svc-body">
-        <div class="field-row">
-          <div class="field">
-            <label>Logical System</label>
-            <input data-f="logicalSystem" value="${svc.logicalSystem ? svc.logicalSystem : ""}" placeholder="khali rakhle main instance">
-          </div>
-          <div class="field">
-            <label>VLAN / Unit ID</label>
-            <input data-f="unit" value="${svc.defaults.unit}">
-          </div>
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label>Layer3 IP (own /30)</label>
-            <input data-f="ownIp" value="${svc.defaults.ownIp}">
-          </div>
-          <div class="field">
-            <label>Your IP (neighbor)</label>
-            <input data-f="neighborIp" value="${svc.defaults.neighborIp}">
-          </div>
-        </div>
-        <div class="field-row single">
-          <div class="field">
-            <label>Policer Bandwidth (Mbps)</label>
-            <input data-f="bandwidth" value="${svc.defaults.bandwidth || ""}" placeholder="e.g. 1000">
-          </div>
-        </div>
-      </div>
-    `;
+      <div class="toggle on" id="toggle-${gw.key}"><div class="knob"></div></div>
+    </div>
+    <div class="gw-row2">
+      <label class="field"><span>Logical System</span><input data-gw="${gw.key}" data-f="logicalSys" value="${gw.logicalSys}" placeholder="${gw.key==='iig' ? 'khali rakhle main instance' : ''}"></label>
+      <label class="field"><span>VLAN / Unit ID</span><input data-gw="${gw.key}" data-f="unit" value="${gw.unit}"></label>
+    </div>
+    <div class="gw-row2">
+      <label class="field"><span>Layer3 IP (Own /30)</span><input data-gw="${gw.key}" data-f="ownIp" value="${gw.ownIp}"></label>
+      <label class="field"><span>Your IP (Neighbor)</span><input data-gw="${gw.key}" data-f="neighbor" value="${gw.neighbor}"></label>
+    </div>
+    <label class="field"><span>Policer Bandwidth (Mbps)</span><input data-gw="${gw.key}" data-f="bandwidth" value="${gw.bandwidth}"></label>
+  `;
+  gwGrid.appendChild(card);
 
-    card.querySelector(".svc-head").addEventListener("click", () => {
-      card.classList.toggle("on");
-      state[svc.key].on = card.classList.contains("on");
-      render();
-    });
-
-    card.querySelectorAll("input[data-f]").forEach(inp => {
-      inp.addEventListener("click", e => e.stopPropagation());
-      inp.addEventListener("input", () => {
-        state[svc.key][inp.dataset.f] = inp.value.trim();
-        if(inp.dataset.f === "logicalSystem"){
-          const tag = card.querySelector(".svc-tag");
-          tag.textContent = inp.value.trim() ? inp.value.trim() : "main";
-        }
-        render();
-      });
-    });
-
-    servicesEl.appendChild(card);
-  });
-
-  // ---- Inputs ----
-  const custNameEl = document.getElementById("custName");
-  const clientBlockEl = document.getElementById("clientBlock");
-  const peerAsEl = document.getElementById("peerAs");
-  const localAsEl = document.getElementById("localAs");
-  const localPrefEl = document.getElementById("localPref");
-  const burstSizeEl = document.getElementById("burstSize");
-  const ifaceNameEl = document.getElementById("ifaceName");
-
-  [custNameEl, clientBlockEl, peerAsEl, localAsEl, localPrefEl, burstSizeEl, ifaceNameEl].forEach(el => {
-    el.addEventListener("input", render);
-  });
-
-  function esc(s){
-    return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-  }
-
-  function line(text){
-    const parts = text.split(" ");
-    let html = `<span class="ln-set">set</span> `;
-    html += `<span class="ln-path">${esc(parts.slice(1).join(" "))}</span>`;
-    return html + "\n";
-  }
-
-  function buildGroupHeader(text){
-    return `<span class="grp-header">${esc(text)}</span>`;
-  }
-
-  function buildSubHeader(text){
-    return `<span class="sub-header">${esc(text)}</span>`;
-  }
-
-  let activeTab = "ALL";
-  let blocksCache = {}; // key -> html string (only for currently-on services)
-  let clientSheetHtml = "";
-
-  function renderTabs(onKeys){
-    const bar = document.getElementById("outputTabs");
-    if(onKeys.length === 0){ bar.innerHTML = ""; return; }
-
-    let html = `<button class="tab ${activeTab === 'ALL' ? 'active' : ''}" data-tab="ALL"><span class="n">${onKeys.length}</span>ALL</button>`;
-    SERVICES.forEach((svc, i) => {
-      if(onKeys.indexOf(svc.key) === -1) return;
-      html += `<button class="tab ${activeTab === svc.key ? 'active' : ''}" data-tab="${svc.key}"><span class="n">0${i+1}</span>${svc.key}</button>`;
-    });
-    html += `<button class="tab tab-client ${activeTab === 'CLIENT' ? 'active' : ''}" data-tab="CLIENT"><span class="n">&#9993;</span>CLIENT SHEET</button>`;
-    bar.innerHTML = html;
-
-    bar.querySelectorAll(".tab").forEach(btn => {
-      btn.addEventListener("click", () => {
-        activeTab = btn.dataset.tab;
-        paintOutput();
-      });
-    });
-  }
-
-  function paintOutput(){
-    const onKeys = SERVICES.filter(s => state[s.key].on).map(s => s.key);
-    if(onKeys.length === 0){
-      document.getElementById("output").innerHTML = '<span class="placeholder">// Circuit parameter fill korle ekhane auto config generate hobe...</span>';
-      return;
-    }
-    if(activeTab !== "ALL" && activeTab !== "CLIENT" && onKeys.indexOf(activeTab) === -1) activeTab = "ALL";
-
-    let html = "";
-    if(activeTab === "ALL"){
-      onKeys.forEach(k => { html += blocksCache[k]; });
-    } else if(activeTab === "CLIENT"){
-      html = clientSheetHtml;
-    } else {
-      html = blocksCache[activeTab] || "";
-    }
-    document.getElementById("output").innerHTML = html.trim() ? html : '<span class="placeholder">// Circuit parameter fill korle ekhane auto config generate hobe...</span>';
-  }
-
-  function render(){
-    const name = (custNameEl.value || "").trim().replace(/\s+/g, "-");
-    const clientBlock = clientBlockEl.value.trim();
-    const peerAs = peerAsEl.value.trim();
-    const localAs = localAsEl.value.trim();
-    const localPref = localPrefEl.value.trim();
-    const burstSize = burstSizeEl.value.trim();
-    const ifaceName = ifaceNameEl.value.trim();
-
-    const onKeys = SERVICES.filter(s => state[s.key].on).map(s => s.key);
-
-    if(!name && !clientBlock && onKeys.length === 0){
-      renderTabs([]);
-      document.getElementById("output").innerHTML = '<span class="placeholder">// Circuit parameter fill korle ekhane auto config generate hobe...</span>';
-      return;
-    }
-
-    const N = name || "Customer-Name";
-    const CB_LIST = clientBlock
-      .split(/[\n,]+/)
-      .map(v => v.trim())
-      .filter(Boolean);
-    const CBS = CB_LIST.length ? CB_LIST : ["0.0.0.0/30"];
-    const PAS = peerAs || "65000";
-    const LAS = localAs || "0";
-    const LP = localPref || "1500";
-    const BURST = burstSize || "5";
-    const IFACE = ifaceName || "ae0";
-
-    blocksCache = {};
-
-    SERVICES.forEach(svc => {
-      const s = state[svc.key];
-      if(!s.on) return;
-
-      const ls = (s.logicalSystem || "").trim();
-      const prefix = ls ? `logical-systems ${ls} ` : "";
-      const groupName = `${N}-${svc.key}`;
-      const importPolicy = `${groupName}-IMPORT`;
-      const community = `${svc.key}-BGP-CLIENTS-IMPORT`;
-      const unit = s.unit || "0";
-      const ownIp = s.ownIp || "0.0.0.0/30";
-      const bw = (s.bandwidth || "").trim();
-
-      let out = "";
-      out += buildGroupHeader(`${svc.label} \u2014 ${ls ? ls : "main instance"}`);
-
-      // Interface
-      out += buildSubHeader("interface");
-      out += line(`${prefix}interfaces ${IFACE} unit ${unit} description ${groupName}`);
-      out += line(`${prefix}interfaces ${IFACE} unit ${unit} vlan-id ${unit}`);
-      if(bw){
-        out += line(`${prefix}interfaces ${IFACE} unit ${unit} family inet policer output ${groupName}`);
-      }
-      out += line(`${prefix}interfaces ${IFACE} unit ${unit} family inet address ${ownIp}`);
-
-      // BGP group
-      out += buildSubHeader("bgp group");
-      out += line(`${prefix}protocols bgp group ${groupName} type external`);
-      out += line(`${prefix}protocols bgp group ${groupName} description ${groupName}`);
-      out += line(`${prefix}protocols bgp group ${groupName} import ${importPolicy}`);
-      out += line(`${prefix}protocols bgp group ${groupName} export ${svc.exportPolicy}`);
-      out += line(`${prefix}protocols bgp group ${groupName} peer-as ${PAS}`);
-      out += line(`${prefix}protocols bgp group ${groupName} local-as ${LAS}`);
-      out += line(`${prefix}protocols bgp group ${groupName} neighbor ${s.neighborIp || "0.0.0.0"}`);
-
-      // Import policy
-      out += buildSubHeader("import policy");
-      CBS.forEach(cb => {
-        out += line(`${prefix}policy-options policy-statement ${importPolicy} term 1 from route-filter ${cb} exact`);
-      });
-      if(svc.defaults.localPref){
-        out += line(`${prefix}policy-options policy-statement ${importPolicy} term 1 then local-preference ${LP}`);
-      }
-      out += line(`${prefix}policy-options policy-statement ${importPolicy} term 1 then community add ${community}`);
-      out += line(`${prefix}policy-options policy-statement ${importPolicy} term 1 then accept`);
-      out += line(`${prefix}policy-options policy-statement ${importPolicy} term 100 then reject`);
-
-      // Firewall policer (global hierarchy, no logical-systems prefix)
-      if(bw){
-        out += buildSubHeader("firewall policer");
-        out += line(`firewall policer ${groupName} shared-bandwidth-policer`);
-        out += line(`firewall policer ${groupName} if-exceeding bandwidth-limit ${bw}m`);
-        out += line(`firewall policer ${groupName} if-exceeding burst-size-limit ${BURST}m`);
-        out += line(`firewall policer ${groupName} then discard`);
-      }
-
-      out += "\n";
-
-      blocksCache[svc.key] = out;
-    });
-
-    // ---- Client-facing handover sheet ----
-    let cs = "";
-    SERVICES.forEach(svc => {
-      const s = state[svc.key];
-      if(!s.on) return;
-      cs += `<span class="cs-block">`;
-      cs += `<span class="cs-title">${esc(svc.key)}</span>`;
-      cs += `<span class="cs-row"><span class="cs-label">VLAN: </span><span class="cs-val">${esc(s.unit || "")}</span></span>\n`;
-      cs += `<span class="cs-row"><span class="cs-label">Layer3 IP: </span><span class="cs-val">${esc(s.ownIp || "")}</span></span>\n`;
-      cs += `<span class="cs-row"><span class="cs-label">Your IP: </span><span class="cs-val">${esc(s.neighborIp || "")}</span></span>`;
-      cs += `</span>\n`;
-    });
-    cs += `<span class="cs-footer">`;
-    cs += `<span class="cs-row">All service will eBGP peer.</span>\n`;
-    cs += `<span class="cs-row"><span class="cs-label">Your AS: </span><span class="cs-val">${esc(PAS)}</span></span>\n`;
-    cs += `<span class="cs-row"><span class="cs-label">Layer3 AS: </span><span class="cs-val">${esc(LAS)}</span></span>\n`;
-    cs += `<span class="cs-row"><span class="cs-label">Your NAT IP:</span></span>\n`;
-    CBS.forEach(cb => {
-      cs += `<span class="cs-row"><span class="cs-val">${esc(cb)}</span></span>\n`;
-    });
-    cs += `</span>`;
-    clientSheetHtml = cs;
-
-    renderTabs(onKeys);
-    paintOutput();
-  }
-
-  // ---- Toolbar actions ----
-  document.getElementById("clearBtn").addEventListener("click", () => {
-    custNameEl.value = "";
-    clientBlockEl.value = "";
-    peerAsEl.value = "";
-    localAsEl.value = "";
-    localPrefEl.value = "";
-    burstSizeEl.value = "";
-    ifaceNameEl.value = "";
+  card.querySelector(`#toggle-${gw.key}`).addEventListener('click', () => {
+    gwState[gw.key] = !gwState[gw.key];
+    card.querySelector(`#toggle-${gw.key}`).classList.toggle('on', gwState[gw.key]);
+    card.classList.toggle('disabled', !gwState[gw.key]);
+    renderTabs();
     render();
   });
+});
 
-  document.getElementById("copyBtn").addEventListener("click", () => {
-    const text = document.getElementById("output").innerText;
-    if(!text || text.indexOf("Circuit parameter") !== -1) return;
-    navigator.clipboard.writeText(text).then(() => {
-      const btn = document.getElementById("copyBtn");
-      const original = btn.textContent;
-      btn.textContent = "Copied";
-      btn.classList.add("copied");
-      setTimeout(() => { btn.textContent = original; btn.classList.remove("copied"); }, 1400);
-    });
+let activeTab = 'all';
+
+function renderTabs(){
+  const tabsEl = document.getElementById('tabs');
+  const activeCount = GATEWAYS.filter(gw => gwState[gw.key]).length;
+  tabsEl.innerHTML = '';
+
+  const allBtn = document.createElement('button');
+  allBtn.className = 'tab-btn' + (activeTab === 'all' ? ' active' : '');
+  allBtn.textContent = `${activeCount} ALL`;
+  allBtn.addEventListener('click', () => { activeTab = 'all'; renderTabs(); render(); });
+  tabsEl.appendChild(allBtn);
+
+  GATEWAYS.forEach((gw, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn' + (activeTab === gw.key ? ' active' : '') + (!gwState[gw.key] ? ' gw-disabled' : '');
+    btn.textContent = `${String(i+1).padStart(2,'0')} ${gw.label}`;
+    btn.addEventListener('click', () => { activeTab = gw.key; renderTabs(); render(); });
+    tabsEl.appendChild(btn);
   });
 
-  document.getElementById("downloadBtn").addEventListener("click", () => {
-    const text = document.getElementById("output").innerText;
-    if(!text || text.indexOf("Circuit parameter") !== -1) return;
-    const name = (custNameEl.value || "client-config").trim().replace(/\s+/g, "-");
-    const isClient = activeTab === "CLIENT";
-    const suffix = activeTab === "ALL" ? "" : `-${activeTab}`;
-    const ext = isClient ? "txt" : "set";
-    const blob = new Blob([text], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${name}${suffix}.${ext}`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  });
+  const sheetBtn = document.createElement('button');
+  sheetBtn.className = 'tab-btn sheet' + (activeTab === 'sheet' ? ' active' : '');
+  sheetBtn.textContent = '≡ CLIENT SHEET';
+  sheetBtn.addEventListener('click', () => { activeTab = 'sheet'; renderTabs(); render(); });
+  tabsEl.appendChild(sheetBtn);
+}
 
+function readGlobals(){
+  return {
+    name: document.getElementById('g_name').value.trim() || 'Customer-Name',
+    routesRaw: document.getElementById('g_routes').value.trim(),
+    peerAs: document.getElementById('g_peeras').value.trim() || '65000',
+    localAs: document.getElementById('g_localas').value.trim() || '0',
+    localPref: document.getElementById('g_localpref').value.trim() || '1500',
+    burst: document.getElementById('g_burst').value.trim() || '5',
+    iface: document.getElementById('g_iface').value.trim() || 'ae0',
+  };
+}
+
+function readFilters(globals){
+  const raw = globals.routesRaw;
+  if (!raw) return ['0.0.0.0/30'];
+  return raw.split(/[\n,]/).map(s => s.trim()).filter(Boolean);
+}
+
+function readGateway(key){
+  const base = GATEWAYS.find(g => g.key === key);
+  const gw = {...base};
+  document.querySelectorAll(`input[data-gw="${key}"]`).forEach(inp => { gw[inp.dataset.f] = inp.value.trim(); });
+  return gw;
+}
+
+function buildSections(gw, globals, filters){
+  const groupName = `${globals.name}-${gw.short}`;
+  const importPolicy = `${groupName}-IMPORT`;
+  const community = `${gw.short}-BGP-CLIENTS-IMPORT`;
+  const hasLS = gw.logicalSys && gw.logicalSys.trim() !== '';
+  const lsPrefix = hasLS ? `logical-systems ${gw.logicalSys} ` : '';
+  const exportPolicy = hasLS ? `FOR-EBGP-${gw.logicalSys}-Clients-EXPORT` : 'DEFAULT-ROUTE-EXPORT';
+  const unit = gw.unit;
+
+  const interfaceLines = [
+    `set ${lsPrefix}interfaces ${globals.iface} unit ${unit} description ${groupName}`,
+    `set ${lsPrefix}interfaces ${globals.iface} unit ${unit} vlan-id ${unit}`,
+  ];
+  if (!hasLS){
+    interfaceLines.push(`set interfaces ${globals.iface} unit ${unit} family inet policer output ${groupName}`);
+  }
+  interfaceLines.push(`set ${lsPrefix}interfaces ${globals.iface} unit ${unit} family inet address ${gw.ownIp}`);
+
+  const bgpLines = [
+    `set ${lsPrefix}protocols bgp group ${groupName} type external`,
+    `set ${lsPrefix}protocols bgp group ${groupName} description ${groupName}`,
+    `set ${lsPrefix}protocols bgp group ${groupName} import ${importPolicy}`,
+    `set ${lsPrefix}protocols bgp group ${groupName} export ${exportPolicy}`,
+    `set ${lsPrefix}protocols bgp group ${groupName} peer-as ${globals.peerAs}`,
+    `set ${lsPrefix}protocols bgp group ${groupName} local-as ${globals.localAs}`,
+    `set ${lsPrefix}protocols bgp group ${groupName} neighbor ${gw.neighbor}`,
+  ];
+
+  const policyLines = filters.map(f =>
+    `set ${lsPrefix}policy-options policy-statement ${importPolicy} term 1 from route-filter ${f} exact`
+  );
+  policyLines.push(`set ${lsPrefix}policy-options policy-statement ${importPolicy} term 1 then local-preference ${globals.localPref}`);
+  policyLines.push(`set ${lsPrefix}policy-options policy-statement ${importPolicy} term 1 then community add ${community}`);
+  policyLines.push(`set ${lsPrefix}policy-options policy-statement ${importPolicy} term 1 then accept`);
+  policyLines.push(`set ${lsPrefix}policy-options policy-statement ${importPolicy} term 100 then reject`);
+
+  const firewallLines = [
+    `set firewall policer ${groupName} if-exceeding bandwidth-limit ${gw.bandwidth}m`,
+    `set firewall policer ${groupName} if-exceeding burst-size-limit ${globals.burst}m`,
+    `set firewall policer ${groupName} then discard`,
+  ];
+
+  const order = hasLS
+    ? [['INTERFACE', interfaceLines], ['BGP GROUP', bgpLines], ['IMPORT POLICY', policyLines], ['FIREWALL POLICER', firewallLines]]
+    : [['INTERFACE', interfaceLines], ['IMPORT POLICY', policyLines], ['BGP GROUP', bgpLines], ['FIREWALL POLICER', firewallLines]];
+
+  return { title: `${gw.label} — ${hasLS ? gw.logicalSys : 'MAIN INSTANCE'}`, sections: order };
+}
+
+function escapeHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function renderSectionsHTML(sections){
+  let html = `<span class="title"># ${escapeHtml(sections.title)}</span>\n\n`;
+  sections.sections.forEach(([label, lines]) => {
+    html += `  <span class="label">${label}</span>\n`;
+    lines.forEach(l => { html += `  ${escapeHtml(l)}\n`; });
+    html += `\n`;
+  });
+  return html.trimEnd() + '\n';
+}
+
+function sectionsToPlainText(sections){
+  let out = `# ${sections.title}\n\n`;
+  sections.sections.forEach(([, lines]) => {
+    lines.forEach(l => { out += l + '\n'; });
+    out += '\n';
+  });
+  return out.trimEnd() + '\n';
+}
+
+function buildClientSheet(globals, filters){
+  const activeGws = GATEWAYS.filter(gw => gwState[gw.key]).map(gw => readGateway(gw.key));
+  let lines = [];
+  activeGws.forEach(gw => {
+    lines.push(`${gw.label}VLAN: ${gw.unit}`);
+    lines.push(`Layer3 IP: ${gw.ownIp}`);
+    lines.push(`Your IP: ${gw.neighbor}`);
+  });
+  lines.push('All service will eBGP peer.');
+  lines.push(`Your AS: ${globals.peerAs}`);
+  lines.push(`Layer3 AS: ${globals.localAs}`);
+  lines.push('Your NAT IP:');
+  filters.forEach(f => lines.push(f));
+  return lines.join('\n');
+}
+
+function renderClientSheetHTML(globals, filters){
+  const activeGws = GATEWAYS.filter(gw => gwState[gw.key]).map(gw => readGateway(gw.key));
+  let html = '';
+  activeGws.forEach(gw => {
+    html += `<span class="sheet-gw">${escapeHtml(gw.label)}</span>\n`;
+    html += `<span class="sheet-label">VLAN:</span> <span class="sheet-value">${escapeHtml(String(gw.unit))}</span>\n\n`;
+    html += `<span class="sheet-label">Layer3 IP:</span> <span class="sheet-value">${escapeHtml(gw.ownIp)}</span>\n\n`;
+    html += `<span class="sheet-label">Your IP:</span> <span class="sheet-value">${escapeHtml(gw.neighbor)}</span>\n\n`;
+  });
+  html += `<span class="sheet-label">All service will eBGP peer.</span>\n\n`;
+  html += `<span class="sheet-label">Your AS:</span> <span class="sheet-value">${escapeHtml(globals.peerAs)}</span>\n`;
+  html += `<span class="sheet-label">Layer3 AS:</span> <span class="sheet-value">${escapeHtml(globals.localAs)}</span>\n\n`;
+  html += `<span class="sheet-label">Your NAT IP:</span>\n`;
+  filters.forEach(f => { html += `<span class="sheet-value">${escapeHtml(f)}</span>\n`; });
+  return html;
+}
+
+function currentPlainText(){
+  const globals = readGlobals();
+  const filters = readFilters(globals);
+  if (activeTab === 'sheet') return buildClientSheet(globals, filters);
+  const activeGws = GATEWAYS.filter(gw => activeTab === 'all' ? gwState[gw.key] : gw.key === activeTab);
+  return activeGws.map(gwBase => sectionsToPlainText(buildSections(readGateway(gwBase.key), globals, filters))).join('\n');
+}
+
+function render(){
+  const globals = readGlobals();
+  const filters = readFilters(globals);
+  const codeOut = document.getElementById('codeOut');
+
+  if (activeTab === 'sheet'){
+    codeOut.innerHTML = renderClientSheetHTML(globals, filters);
+    return;
+  }
+
+  const activeGws = GATEWAYS.filter(gw => activeTab === 'all' ? gwState[gw.key] : gw.key === activeTab);
+  if (activeGws.length === 0){
+    codeOut.innerHTML = '<span class="label">No gateways enabled.</span>';
+    return;
+  }
+  codeOut.innerHTML = activeGws
+    .map(gwBase => renderSectionsHTML(buildSections(readGateway(gwBase.key), globals, filters)))
+    .join('\n');
+}
+
+document.addEventListener('input', (e) => {
+  if (e.target.closest('.card')) render();
+});
+
+document.getElementById('copyBtn').addEventListener('click', () => {
+  navigator.clipboard.writeText(currentPlainText()).then(() => {
+    const btn = document.getElementById('copyBtn');
+    const original = btn.textContent;
+    btn.textContent = 'COPIED';
+    setTimeout(() => { btn.textContent = original; }, 1500);
+  });
+});
+
+document.getElementById('downloadBtn').addEventListener('click', () => {
+  const globals = readGlobals();
+  const filename = activeTab === 'all' ? `${globals.name}-all.set`
+    : activeTab === 'sheet' ? `${globals.name}-client-sheet.txt`
+    : `${globals.name}-${activeTab}.set`;
+  const blob = new Blob([currentPlainText()], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+  document.getElementById('g_name').value = '';
+  document.getElementById('g_routes').value = '';
+  document.getElementById('g_peeras').value = '';
+  document.getElementById('g_localas').value = '';
+  document.getElementById('g_localpref').value = '';
+  document.getElementById('g_burst').value = '';
   render();
-})();
+});
+
+renderTabs();
+render();
 </script>
 
 </body>
