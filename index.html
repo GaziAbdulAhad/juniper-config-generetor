@@ -210,6 +210,7 @@ GATEWAYS.forEach((gw) => {
       <label class="field"><span>Policer Bandwidth</span><input data-gw="${gw.key}" data-f="bandwidth" value="${gw.bandwidth}" placeholder="e.g. 2080m / 50g / 2300000000"></label>
       <label class="field"><span>Policer Burst</span><input data-gw="${gw.key}" data-f="burst" value="${gw.burst}" placeholder="e.g. 5m"></label>
     </div>
+    <div class="help" style="margin:-8px 0 12px 0;">Bandwidth khali rakhle ei gateway-e kono policer generate hobe na (jemon BDIX-e onek shomoy policer thake na).</div>
     <label class="field"><span>Local Preference</span><input data-gw="${gw.key}" data-f="localPref" value="${gw.localPref}"></label>
     <label class="field">
       <span>Client Route Block / NAT IP (Route-filter)</span>
@@ -301,15 +302,18 @@ function buildSections(gw, globals){
   const exportPolicy = gw.exportPolicy || defaultExport(gw);
   const hasLS = gw.logicalSys && gw.logicalSys.trim() !== '';
   const lsPrefix = hasLS ? `logical-systems ${gw.logicalSys} ` : '';
+  const hasPolicer = gw.bandwidth && gw.bandwidth.trim() !== '';
   const unit = gw.unit;
   const filters = readGwFilters(gw);
 
   const interfaceLines = [
     `set ${lsPrefix}interfaces ${globals.iface} unit ${unit} description ${descName}`,
     `set ${lsPrefix}interfaces ${globals.iface} unit ${unit} vlan-id ${unit}`,
-    `set ${lsPrefix}interfaces ${globals.iface} unit ${unit} family inet policer output ${policerName}`,
-    `set ${lsPrefix}interfaces ${globals.iface} unit ${unit} family inet address ${gw.ownIp}`,
   ];
+  if (hasPolicer){
+    interfaceLines.push(`set ${lsPrefix}interfaces ${globals.iface} unit ${unit} family inet policer output ${policerName}`);
+  }
+  interfaceLines.push(`set ${lsPrefix}interfaces ${globals.iface} unit ${unit} family inet address ${gw.ownIp}`);
 
   const bgpLines = [
     `set ${lsPrefix}protocols bgp group ${groupName} type external`,
@@ -329,18 +333,19 @@ function buildSections(gw, globals){
   policyLines.push(`set ${lsPrefix}policy-options policy-statement ${importPolicy} term 1 then accept`);
   policyLines.push(`set ${lsPrefix}policy-options policy-statement ${importPolicy} term 100 then reject`);
 
-  const firewallLines = [
+  const firewallLines = hasPolicer ? [
     `set firewall policer ${policerName} shared-bandwidth-policer`,
     `set firewall policer ${policerName} if-exceeding bandwidth-limit ${gw.bandwidth}`,
-    `set firewall policer ${policerName} if-exceeding burst-size-limit ${gw.burst}`,
+    `set firewall policer ${policerName} if-exceeding burst-size-limit ${(gw.burst && gw.burst.trim()) || '5m'}`,
     `set firewall policer ${policerName} then discard`,
-  ];
+  ] : [];
 
   const order = hasLS
     ? [['INTERFACE', interfaceLines], ['BGP GROUP', bgpLines], ['IMPORT POLICY', policyLines], ['FIREWALL POLICER', firewallLines]]
     : [['INTERFACE', interfaceLines], ['IMPORT POLICY', policyLines], ['BGP GROUP', bgpLines], ['FIREWALL POLICER', firewallLines]];
+  const filteredOrder = order.filter(([, lines]) => lines.length > 0);
 
-  return { title: `${gw.label} — ${hasLS ? gw.logicalSys : 'MAIN INSTANCE'}`, sections: order };
+  return { title: `${gw.label} — ${hasLS ? gw.logicalSys : 'MAIN INSTANCE'}`, sections: filteredOrder };
 }
 
 function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
