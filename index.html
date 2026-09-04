@@ -38,111 +38,60 @@
     width:8px;height:8px;border-radius:50%;background:var(--accent);
     display:inline-block;box-shadow:0 0 8px var(--accent);margin-right:6px;
   }
-  header h1{
-    font-size:16px;margin:0;letter-spacing:2px;color:var(--text);
-    display:inline;font-weight:700;
-  }
+  header h1{font-size:16px;margin:0;letter-spacing:2px;color:var(--text);display:inline;font-weight:700;}
   .subtitle{font-size:11.5px;color:var(--muted);letter-spacing:0.3px;}
-  .live-badge{
-    border:1px solid var(--accent);color:var(--accent);
-    padding:5px 12px;border-radius:4px;font-size:11px;
-    letter-spacing:1.5px;font-weight:700;
-  }
-  .wrap{max-width:1200px;margin:0 auto;padding:24px;}
-  .card{
-    background:var(--panel);border:1px solid var(--border);
-    border-radius:4px;padding:22px 24px;margin-bottom:22px;
-  }
-  .card h2{
-    font-size:11.5px;color:var(--muted);letter-spacing:2px;
-    margin:0 0 18px 0;font-weight:700;
-    border-bottom:1px solid var(--border);padding-bottom:14px;
-  }
+  .live-badge{border:1px solid var(--accent);color:var(--accent);padding:5px 12px;border-radius:4px;font-size:11px;letter-spacing:1.5px;font-weight:700;}
+  .wrap{max-width:1300px;margin:0 auto;padding:24px;}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:22px 24px;margin-bottom:22px;}
+  .card h2{font-size:11.5px;color:var(--muted);letter-spacing:2px;margin:0 0 18px 0;font-weight:700;border-bottom:1px solid var(--border);padding-bottom:14px;}
   label.field{display:flex;flex-direction:column;gap:7px;margin-bottom:16px;}
   label.field:last-child{margin-bottom:0;}
-  label.field span{
-    font-size:11px;letter-spacing:1px;color:var(--label);
-    text-transform:uppercase;font-weight:600;
-  }
-  input, textarea{
-    background:var(--input-bg);border:1px solid var(--border);
-    color:var(--text);padding:10px 12px;border-radius:3px;
-    font-size:13px;font-family:inherit;width:100%;
-  }
+  label.field span{font-size:11px;letter-spacing:1px;color:var(--label);text-transform:uppercase;font-weight:600;}
+  input, textarea{background:var(--input-bg);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:3px;font-size:13px;font-family:inherit;width:100%;}
   input::placeholder, textarea::placeholder{color:#4a4636;}
   input:focus, textarea:focus{outline:none;border-color:var(--accent);}
-  textarea{min-height:64px;resize:vertical;}
+  input.input-invalid{border-color:var(--danger);}
+  input.input-warn{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset;}
+  textarea{min-height:60px;resize:vertical;}
   .help{font-size:11px;color:var(--muted);line-height:1.5;}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
-  .section-divider{
-    display:flex;align-items:center;gap:14px;margin:26px 0 18px 0;
-  }
-  .section-divider::before, .section-divider::after{
-    content:'';flex:1;height:1px;background:var(--border);
-  }
-  .section-divider span{
-    font-size:11.5px;color:var(--muted);letter-spacing:2px;font-weight:700;
-  }
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
+  @media (max-width:700px){.row3{grid-template-columns:1fr 1fr;}}
+  .section-divider{display:flex;align-items:center;gap:14px;margin:26px 0 18px 0;}
+  .section-divider::before, .section-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+  .section-divider span{font-size:11.5px;color:var(--muted);letter-spacing:2px;font-weight:700;}
   .gw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
-  @media (max-width:860px){.gw-grid{grid-template-columns:repeat(2,1fr);}}
-  @media (max-width:560px){.gw-grid{grid-template-columns:1fr;}}
-  .gw-card{
-    background:var(--panel-2);border:1px solid var(--border);
-    border-radius:4px;padding:16px;
-  }
+  @media (max-width:1050px){.gw-grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:640px){.gw-grid{grid-template-columns:1fr;}}
+  .gw-card{background:var(--panel-2);border:1px solid var(--border);border-radius:4px;padding:16px;}
   .gw-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
   .gw-head-left{display:flex;align-items:center;gap:8px;}
   .gw-head h3{margin:0;font-size:13px;color:var(--text);font-weight:700;}
-  .ls-badge{
-    font-size:10px;color:var(--green);border:1px solid var(--green);
-    padding:2px 7px;border-radius:3px;letter-spacing:0.5px;
-  }
-  .toggle{
-    width:34px;height:18px;border-radius:10px;background:var(--track);
-    border:1px solid var(--border);position:relative;cursor:pointer;flex-shrink:0;
-  }
-  .toggle .knob{
-    width:12px;height:12px;border-radius:50%;background:var(--muted);
-    position:absolute;top:2px;left:2px;transition:left .15s, background .15s;
-  }
+  .ls-badge{font-size:10px;color:var(--green);border:1px solid var(--green);padding:2px 7px;border-radius:3px;letter-spacing:0.5px;}
+  .toggle{width:34px;height:18px;border-radius:10px;background:var(--track);border:1px solid var(--border);position:relative;cursor:pointer;flex-shrink:0;}
+  .toggle .knob{width:12px;height:12px;border-radius:50%;background:var(--muted);position:absolute;top:2px;left:2px;transition:left .15s, background .15s;}
   .toggle.on{background:rgba(232,163,61,0.18);border-color:var(--accent);}
   .toggle.on .knob{left:18px;background:var(--accent);}
   .gw-card.disabled{opacity:0.4;}
   .gw-card .field{margin-bottom:12px;}
   .gw-card .field:last-child{margin-bottom:0;}
   .gw-row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
-  .out-toolbar{
-    display:flex;align-items:center;justify-content:space-between;
-    margin-bottom:16px;flex-wrap:wrap;gap:10px;
-  }
+  .gw-divider{border-top:1px dashed var(--border);margin:14px 0;padding-top:2px;}
+  .gw-mini-label{font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:8px;text-transform:uppercase;}
+  .out-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
   .out-toolbar h2{margin:0;border:none;padding:0;}
   .toolbar-btns{display:flex;gap:8px;}
-  .ghost-btn{
-    background:transparent;border:1px solid var(--border);color:var(--text);
-    padding:7px 14px;border-radius:3px;font-size:11px;letter-spacing:0.5px;
-    cursor:pointer;font-family:inherit;font-weight:600;
-  }
+  .ghost-btn{background:transparent;border:1px solid var(--border);color:var(--text);padding:7px 14px;border-radius:3px;font-size:11px;letter-spacing:0.5px;cursor:pointer;font-family:inherit;font-weight:600;}
   .ghost-btn:hover{border-color:var(--accent);color:var(--accent);}
   .ghost-btn.primary{border-color:var(--accent);color:var(--accent);}
-  .tabs{
-    display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;
-    align-items:center;
-  }
-  .tab-btn{
-    background:transparent;border:1px solid var(--border);color:var(--muted);
-    padding:7px 13px;border-radius:3px;font-size:11px;letter-spacing:0.5px;
-    cursor:pointer;font-family:inherit;font-weight:600;
-  }
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;align-items:center;}
+  .tab-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:7px 13px;border-radius:3px;font-size:11px;letter-spacing:0.5px;cursor:pointer;font-family:inherit;font-weight:600;}
   .tab-btn:hover{color:var(--text);}
   .tab-btn.active{background:var(--accent);border-color:var(--accent);color:#1a1204;}
   .tab-btn.sheet{border-color:var(--green);color:var(--green);margin-left:auto;}
   .tab-btn.sheet.active{background:var(--green);color:#04180a;}
   .tab-btn.gw-disabled{opacity:0.4;}
-  pre#codeOut{
-    background:var(--panel-2);border:1px solid var(--border);border-radius:4px;
-    padding:20px 22px;font-size:12.5px;line-height:1.7;color:var(--code);
-    overflow:auto;white-space:pre;margin:0;max-height:560px;
-  }
+  pre#codeOut{background:var(--panel-2);border:1px solid var(--border);border-radius:4px;padding:20px 22px;font-size:12.5px;line-height:1.7;color:var(--code);overflow:auto;white-space:pre;margin:0;max-height:560px;}
   pre#codeOut .title{color:var(--gold);font-weight:700;}
   pre#codeOut .label{color:var(--muted);letter-spacing:1px;}
   pre#codeOut .kw{color:#e2b45f;}
@@ -168,25 +117,28 @@
   <div class="card">
     <h2>CIRCUIT PARAMETERS</h2>
 
-    <label class="field">
-      <span>POP / Customer Name</span>
-      <input id="g_name" placeholder="e.g. Gokul-Nurullaganj-PoP">
-      <span class="help">Ei naam-e group / policy / interface description toiri hobe (case jemon type korben temoni thakbe).</span>
-    </label>
+    <div class="row2">
+      <label class="field">
+        <span>Interface Description Name (POP/Location)</span>
+        <input id="g_desc" placeholder="e.g. Sherpur-Sadar-PoP">
+        <span class="help">Interface description-e babohar hobe: {name}-GW. Example: Sherpur-Sadar-PoP-IIG</span>
+      </label>
+      <label class="field">
+        <span>Client / Group Name</span>
+        <input id="g_client" placeholder="e.g. MAHADI">
+        <span class="help">BGP group, policy-statement, ar bgp description-e babohar hobe: {name}-GW</span>
+      </label>
+    </div>
 
     <label class="field">
-      <span>Client Route Block / NAT IP (Route-filter)</span>
-      <textarea id="g_routes" placeholder="103.81.105.116/30&#10;103.81.105.120/30"></textarea>
-      <span class="help">Ekadhik NAT IP thakle notun line-e ba comma diye alada alada likhun — protyekta jonno alada route-filter line generate hobe.</span>
+      <span>Policer Base Name (optional)</span>
+      <input id="g_policerbase" placeholder="khali rakhle Client Name babohar hobe (e.g. MAHADI-HQ)">
+      <span class="help">Firewall policer ar family inet policer-output-e babohar hobe: {name}-GW</span>
     </label>
 
     <div class="row2">
       <label class="field"><span>Your AS (Customer / Peer-AS)</span><input id="g_peeras" placeholder="65001"></label>
       <label class="field"><span>Layer3 AS (Router / Local-AS)</span><input id="g_localas" placeholder="136141"></label>
-    </div>
-    <div class="row2">
-      <label class="field"><span>Local Preference</span><input id="g_localpref" placeholder="1500"></label>
-      <label class="field"><span>Policer Burst Size (Mbps)</span><input id="g_burst" placeholder="5"></label>
     </div>
 
     <label class="field"><span>Interface</span><input id="g_iface" value="ae0"></label>
@@ -215,19 +167,26 @@
 
 <script>
 const GATEWAYS = [
-  {key:'iig',  label:'IIG',  short:'IIG',  unit:1808, bandwidth:'2080', logicalSys:'',          ownIp:'10.2.160.41/30',   neighbor:'10.2.160.42'},
-  {key:'ggc',  label:'GGC',  short:'GGC',  unit:1809, bandwidth:'7000', logicalSys:'GGC-R3',     ownIp:'172.19.101.41/30', neighbor:'172.19.101.42'},
-  {key:'fna',  label:'FNA',  short:'FNA',  unit:1810, bandwidth:'4050', logicalSys:'FNA-R3',     ownIp:'172.18.101.41/30', neighbor:'172.18.101.42'},
-  {key:'cdn',  label:'CDN',  short:'CDN',  unit:1812, bandwidth:'1010', logicalSys:'CDN-R2',     ownIp:'10.2.159.41/30',   neighbor:'10.2.159.42'},
-  {key:'bdix', label:'BDIX', short:'BDIX', unit:1811, bandwidth:'5000', logicalSys:'BDIX-R2',    ownIp:'172.16.7.41/30',   neighbor:'172.16.7.42'},
-  {key:'bcdn', label:'BCDN', short:'BCDN', unit:1813, bandwidth:'900',  logicalSys:'BCDN-R2',    ownIp:'10.100.99.41/30',  neighbor:'10.100.99.42'},
+  {key:'iig',  label:'IIG',  short:'IIG',  unit:1808, bandwidth:'2080m', burst:'5m', localPref:'1500', logicalSys:'',          ownIp:'10.2.160.41/30',   neighbor:'10.2.160.42'},
+  {key:'ggc',  label:'GGC',  short:'GGC',  unit:1809, bandwidth:'7000m', burst:'5m', localPref:'1500', logicalSys:'GGC-R3',     ownIp:'172.19.101.41/30', neighbor:'172.19.101.42'},
+  {key:'fna',  label:'FNA',  short:'FNA',  unit:1810, bandwidth:'4050m', burst:'5m', localPref:'1500', logicalSys:'FNA-R3',     ownIp:'172.18.101.41/30', neighbor:'172.18.101.42'},
+  {key:'cdn',  label:'CDN',  short:'CDN',  unit:1812, bandwidth:'1010m', burst:'5m', localPref:'1500', logicalSys:'CDN-R2',     ownIp:'10.2.159.41/30',   neighbor:'10.2.159.42'},
+  {key:'bdix', label:'BDIX', short:'BDIX', unit:1811, bandwidth:'5000m', burst:'5m', localPref:'1500', logicalSys:'BDIX-R2',    ownIp:'172.16.7.41/30',   neighbor:'172.16.7.42'},
+  {key:'bcdn', label:'BCDN', short:'BCDN', unit:1813, bandwidth:'900m',  burst:'5m', localPref:'1500', logicalSys:'BCDN-R2',    ownIp:'10.100.99.41/30',  neighbor:'10.100.99.42'},
 ];
+
+function defaultExport(gw){
+  return gw.logicalSys ? `FOR-EBGP-${gw.logicalSys}-Clients-EXPORT` : 'DEFAULT-ROUTE-EXPORT';
+}
+function defaultCommunity(gw){
+  return `${gw.short}-BGP-CLIENTS-IMPORT`;
+}
 
 const gwState = {};
 GATEWAYS.forEach(gw => { gwState[gw.key] = true; });
 
 const gwGrid = document.getElementById('gwGrid');
-GATEWAYS.forEach((gw, i) => {
+GATEWAYS.forEach((gw) => {
   const card = document.createElement('div');
   card.className = 'gw-card';
   card.dataset.gwKey = gw.key;
@@ -247,7 +206,20 @@ GATEWAYS.forEach((gw, i) => {
       <label class="field"><span>Layer3 IP (Own /30)</span><input data-gw="${gw.key}" data-f="ownIp" value="${gw.ownIp}"></label>
       <label class="field"><span>Your IP (Neighbor)</span><input data-gw="${gw.key}" data-f="neighbor" value="${gw.neighbor}"></label>
     </div>
-    <label class="field"><span>Policer Bandwidth (Mbps)</span><input data-gw="${gw.key}" data-f="bandwidth" value="${gw.bandwidth}"></label>
+    <div class="gw-row2">
+      <label class="field"><span>Policer Bandwidth</span><input data-gw="${gw.key}" data-f="bandwidth" value="${gw.bandwidth}" placeholder="e.g. 2080m / 50g / 2300000000"></label>
+      <label class="field"><span>Policer Burst</span><input data-gw="${gw.key}" data-f="burst" value="${gw.burst}" placeholder="e.g. 5m"></label>
+    </div>
+    <label class="field"><span>Local Preference</span><input data-gw="${gw.key}" data-f="localPref" value="${gw.localPref}"></label>
+    <label class="field">
+      <span>Client Route Block / NAT IP (Route-filter)</span>
+      <textarea data-gw="${gw.key}" data-f="routesRaw" placeholder="e.g. 103.81.104.92/30 exact&#10;103.13.192.208/30 upto /32"></textarea>
+      <span class="help">Match type na dile "exact" nijei add hobe. Notun line ba comma diye alada korun.</span>
+    </label>
+    <div class="gw-divider"></div>
+    <div class="gw-mini-label">Advanced (auto-filled, override korte paren)</div>
+    <label class="field"><span>Export Policy</span><input data-gw="${gw.key}" data-f="exportPolicy" value="${defaultExport(gw)}"></label>
+    <label class="field"><span>Community Name</span><input data-gw="${gw.key}" data-f="community" value="${defaultCommunity(gw)}"></label>
   `;
   gwGrid.appendChild(card);
 
@@ -290,46 +262,54 @@ function renderTabs(){
 
 function readGlobals(){
   return {
-    name: document.getElementById('g_name').value.trim() || 'Customer-Name',
-    routesRaw: document.getElementById('g_routes').value.trim(),
+    desc: document.getElementById('g_desc').value.trim() || 'Customer-Name',
+    client: document.getElementById('g_client').value.trim() || 'Customer-Name',
+    policerBase: document.getElementById('g_policerbase').value.trim(),
     peerAs: document.getElementById('g_peeras').value.trim() || '65000',
     localAs: document.getElementById('g_localas').value.trim() || '0',
-    localPref: document.getElementById('g_localpref').value.trim() || '1500',
-    burst: document.getElementById('g_burst').value.trim() || '5',
     iface: document.getElementById('g_iface').value.trim() || 'ae0',
   };
 }
 
-function readFilters(globals){
-  const raw = globals.routesRaw;
-  if (!raw) return ['0.0.0.0/30'];
-  return raw.split(/[\n,]/).map(s => s.trim()).filter(Boolean);
+const MATCH_KEYWORDS = /\b(exact|orlonger|longer|upto|through|prefix-length-range)\b/i;
+function formatRouteFilter(line){
+  const t = line.trim();
+  if (!t) return null;
+  if (MATCH_KEYWORDS.test(t)) return t;
+  return `${t} exact`;
+}
+function readGwFilters(gw){
+  const raw = (gw.routesRaw || '').trim();
+  if (!raw) return ['0.0.0.0/30 exact'];
+  return raw.split(/[\n,]/).map(formatRouteFilter).filter(Boolean);
 }
 
 function readGateway(key){
   const base = GATEWAYS.find(g => g.key === key);
   const gw = {...base};
-  document.querySelectorAll(`input[data-gw="${key}"]`).forEach(inp => { gw[inp.dataset.f] = inp.value.trim(); });
+  document.querySelectorAll(`input[data-gw="${key}"], textarea[data-gw="${key}"]`).forEach(inp => { gw[inp.dataset.f] = inp.value.trim(); });
   return gw;
 }
 
-function buildSections(gw, globals, filters){
-  const groupName = `${globals.name}-${gw.short}`;
+function buildSections(gw, globals){
+  const groupName = `${globals.client}-${gw.short}`;
+  const descName = `${globals.desc}-${gw.short}`;
+  const policerBase = globals.policerBase || globals.client;
+  const policerName = `${policerBase}-${gw.short}`;
   const importPolicy = `${groupName}-IMPORT`;
-  const community = `${gw.short}-BGP-CLIENTS-IMPORT`;
+  const community = gw.community || defaultCommunity(gw);
+  const exportPolicy = gw.exportPolicy || defaultExport(gw);
   const hasLS = gw.logicalSys && gw.logicalSys.trim() !== '';
   const lsPrefix = hasLS ? `logical-systems ${gw.logicalSys} ` : '';
-  const exportPolicy = hasLS ? `FOR-EBGP-${gw.logicalSys}-Clients-EXPORT` : 'DEFAULT-ROUTE-EXPORT';
   const unit = gw.unit;
+  const filters = readGwFilters(gw);
 
   const interfaceLines = [
-    `set ${lsPrefix}interfaces ${globals.iface} unit ${unit} description ${groupName}`,
+    `set ${lsPrefix}interfaces ${globals.iface} unit ${unit} description ${descName}`,
     `set ${lsPrefix}interfaces ${globals.iface} unit ${unit} vlan-id ${unit}`,
+    `set ${lsPrefix}interfaces ${globals.iface} unit ${unit} family inet policer output ${policerName}`,
+    `set ${lsPrefix}interfaces ${globals.iface} unit ${unit} family inet address ${gw.ownIp}`,
   ];
-  if (!hasLS){
-    interfaceLines.push(`set interfaces ${globals.iface} unit ${unit} family inet policer output ${groupName}`);
-  }
-  interfaceLines.push(`set ${lsPrefix}interfaces ${globals.iface} unit ${unit} family inet address ${gw.ownIp}`);
 
   const bgpLines = [
     `set ${lsPrefix}protocols bgp group ${groupName} type external`,
@@ -342,17 +322,18 @@ function buildSections(gw, globals, filters){
   ];
 
   const policyLines = filters.map(f =>
-    `set ${lsPrefix}policy-options policy-statement ${importPolicy} term 1 from route-filter ${f} exact`
+    `set ${lsPrefix}policy-options policy-statement ${importPolicy} term 1 from route-filter ${f}`
   );
-  policyLines.push(`set ${lsPrefix}policy-options policy-statement ${importPolicy} term 1 then local-preference ${globals.localPref}`);
+  policyLines.push(`set ${lsPrefix}policy-options policy-statement ${importPolicy} term 1 then local-preference ${gw.localPref}`);
   policyLines.push(`set ${lsPrefix}policy-options policy-statement ${importPolicy} term 1 then community add ${community}`);
   policyLines.push(`set ${lsPrefix}policy-options policy-statement ${importPolicy} term 1 then accept`);
   policyLines.push(`set ${lsPrefix}policy-options policy-statement ${importPolicy} term 100 then reject`);
 
   const firewallLines = [
-    `set firewall policer ${groupName} if-exceeding bandwidth-limit ${gw.bandwidth}m`,
-    `set firewall policer ${groupName} if-exceeding burst-size-limit ${globals.burst}m`,
-    `set firewall policer ${groupName} then discard`,
+    `set firewall policer ${policerName} shared-bandwidth-policer`,
+    `set firewall policer ${policerName} if-exceeding bandwidth-limit ${gw.bandwidth}`,
+    `set firewall policer ${policerName} if-exceeding burst-size-limit ${gw.burst}`,
+    `set firewall policer ${policerName} then discard`,
   ];
 
   const order = hasLS
@@ -362,9 +343,7 @@ function buildSections(gw, globals, filters){
   return { title: `${gw.label} — ${hasLS ? gw.logicalSys : 'MAIN INSTANCE'}`, sections: order };
 }
 
-function escapeHtml(s){
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
+function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function renderSectionsHTML(sections){
   let html = `<span class="title"># ${escapeHtml(sections.title)}</span>\n\n`;
@@ -385,7 +364,7 @@ function sectionsToPlainText(sections){
   return out.trimEnd() + '\n';
 }
 
-function buildClientSheet(globals, filters){
+function buildClientSheet(globals){
   const activeGws = GATEWAYS.filter(gw => gwState[gw.key]).map(gw => readGateway(gw.key));
   let lines = [];
   activeGws.forEach(gw => {
@@ -397,11 +376,18 @@ function buildClientSheet(globals, filters){
   lines.push(`Your AS: ${globals.peerAs}`);
   lines.push(`Layer3 AS: ${globals.localAs}`);
   lines.push('Your NAT IP:');
-  filters.forEach(f => lines.push(f));
+  const allFilters = [];
+  activeGws.forEach(gw => {
+    readGwFilters(gw).forEach(f => {
+      const raw = f.replace(MATCH_KEYWORDS, '').trim();
+      if (!allFilters.includes(raw)) allFilters.push(raw);
+    });
+  });
+  allFilters.forEach(f => lines.push(f));
   return lines.join('\n');
 }
 
-function renderClientSheetHTML(globals, filters){
+function renderClientSheetHTML(globals){
   const activeGws = GATEWAYS.filter(gw => gwState[gw.key]).map(gw => readGateway(gw.key));
   let html = '';
   activeGws.forEach(gw => {
@@ -414,25 +400,73 @@ function renderClientSheetHTML(globals, filters){
   html += `<span class="sheet-label">Your AS:</span> <span class="sheet-value">${escapeHtml(globals.peerAs)}</span>\n`;
   html += `<span class="sheet-label">Layer3 AS:</span> <span class="sheet-value">${escapeHtml(globals.localAs)}</span>\n\n`;
   html += `<span class="sheet-label">Your NAT IP:</span>\n`;
-  filters.forEach(f => { html += `<span class="sheet-value">${escapeHtml(f)}</span>\n`; });
+  const allFilters = [];
+  activeGws.forEach(gw => {
+    readGwFilters(gw).forEach(f => {
+      const raw = f.replace(MATCH_KEYWORDS, '').trim();
+      if (!allFilters.includes(raw)) allFilters.push(raw);
+    });
+  });
+  allFilters.forEach(f => { html += `<span class="sheet-value">${escapeHtml(f)}</span>\n`; });
   return html;
+}
+
+function isValidCidr30(v){ return /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2}$/.test(String(v).trim()); }
+function isValidIp(v){
+  const m = String(v).trim().match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  return !!m && m.slice(1).every(o => Number(o) >= 0 && Number(o) <= 255);
+}
+
+function validateFields(){
+  const unitInputs = [], ownInputs = [], neighborInputs = [];
+  GATEWAYS.forEach(gw => {
+    if (!gwState[gw.key]) return;
+    const uInp = document.querySelector(`input[data-gw="${gw.key}"][data-f="unit"]`);
+    const oInp = document.querySelector(`input[data-gw="${gw.key}"][data-f="ownIp"]`);
+    const nInp = document.querySelector(`input[data-gw="${gw.key}"][data-f="neighbor"]`);
+    unitInputs.push(uInp); ownInputs.push(oInp); neighborInputs.push(nInp);
+    oInp.classList.toggle('input-invalid', !isValidCidr30(oInp.value));
+    oInp.title = isValidCidr30(oInp.value) ? '' : 'Expected format: a.b.c.d/30';
+    nInp.classList.toggle('input-invalid', !isValidIp(nInp.value));
+    nInp.title = isValidIp(nInp.value) ? '' : 'Enter a valid IPv4 address';
+  });
+
+  const unitCounts = {}, ownCounts = {}, neighborCounts = {};
+  unitInputs.forEach(i => { const v = i.value.trim(); unitCounts[v] = (unitCounts[v]||0)+1; });
+  ownInputs.forEach(i => { const v = i.value.trim(); ownCounts[v] = (ownCounts[v]||0)+1; });
+  neighborInputs.forEach(i => { const v = i.value.trim(); neighborCounts[v] = (neighborCounts[v]||0)+1; });
+
+  unitInputs.forEach(i => {
+    const dup = unitCounts[i.value.trim()] > 1;
+    i.classList.toggle('input-warn', dup);
+    if (dup) i.title = 'Duplicate VLAN/Unit ID — used by another active gateway';
+  });
+  ownInputs.forEach(i => {
+    const dup = ownCounts[i.value.trim()] > 1;
+    if (dup && !i.classList.contains('input-invalid')) { i.classList.add('input-warn'); i.title = 'Duplicate Layer3 IP — used by another active gateway'; }
+    else if (!i.classList.contains('input-invalid')) { i.classList.remove('input-warn'); }
+  });
+  neighborInputs.forEach(i => {
+    const dup = neighborCounts[i.value.trim()] > 1;
+    if (dup && !i.classList.contains('input-invalid')) { i.classList.add('input-warn'); i.title = 'Duplicate neighbor IP — used by another active gateway'; }
+    else if (!i.classList.contains('input-invalid')) { i.classList.remove('input-warn'); }
+  });
 }
 
 function currentPlainText(){
   const globals = readGlobals();
-  const filters = readFilters(globals);
-  if (activeTab === 'sheet') return buildClientSheet(globals, filters);
+  if (activeTab === 'sheet') return buildClientSheet(globals);
   const activeGws = GATEWAYS.filter(gw => activeTab === 'all' ? gwState[gw.key] : gw.key === activeTab);
-  return activeGws.map(gwBase => sectionsToPlainText(buildSections(readGateway(gwBase.key), globals, filters))).join('\n');
+  return activeGws.map(gwBase => sectionsToPlainText(buildSections(readGateway(gwBase.key), globals))).join('\n');
 }
 
 function render(){
   const globals = readGlobals();
-  const filters = readFilters(globals);
   const codeOut = document.getElementById('codeOut');
+  validateFields();
 
   if (activeTab === 'sheet'){
-    codeOut.innerHTML = renderClientSheetHTML(globals, filters);
+    codeOut.innerHTML = renderClientSheetHTML(globals);
     return;
   }
 
@@ -442,7 +476,7 @@ function render(){
     return;
   }
   codeOut.innerHTML = activeGws
-    .map(gwBase => renderSectionsHTML(buildSections(readGateway(gwBase.key), globals, filters)))
+    .map(gwBase => renderSectionsHTML(buildSections(readGateway(gwBase.key), globals)))
     .join('\n');
 }
 
@@ -461,9 +495,9 @@ document.getElementById('copyBtn').addEventListener('click', () => {
 
 document.getElementById('downloadBtn').addEventListener('click', () => {
   const globals = readGlobals();
-  const filename = activeTab === 'all' ? `${globals.name}-all.set`
-    : activeTab === 'sheet' ? `${globals.name}-client-sheet.txt`
-    : `${globals.name}-${activeTab}.set`;
+  const filename = activeTab === 'all' ? `${globals.client}-all.set`
+    : activeTab === 'sheet' ? `${globals.client}-client-sheet.txt`
+    : `${globals.client}-${activeTab}.set`;
   const blob = new Blob([currentPlainText()], { type: 'text/plain' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -473,12 +507,12 @@ document.getElementById('downloadBtn').addEventListener('click', () => {
 });
 
 document.getElementById('clearBtn').addEventListener('click', () => {
-  document.getElementById('g_name').value = '';
-  document.getElementById('g_routes').value = '';
+  document.getElementById('g_desc').value = '';
+  document.getElementById('g_client').value = '';
+  document.getElementById('g_policerbase').value = '';
   document.getElementById('g_peeras').value = '';
   document.getElementById('g_localas').value = '';
-  document.getElementById('g_localpref').value = '';
-  document.getElementById('g_burst').value = '';
+  document.querySelectorAll('textarea[data-f="routesRaw"]').forEach(t => t.value = '');
   render();
 });
 
