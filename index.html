@@ -171,14 +171,16 @@ const GATEWAYS = [
   {key:'ggc',  label:'GGC',  short:'GGC',  unit:1809, bandwidth:'7000m', burst:'5m', localPref:'1500', logicalSys:'GGC-R3',     ownIp:'172.19.101.41/30', neighbor:'172.19.101.42'},
   {key:'fna',  label:'FNA',  short:'FNA',  unit:1810, bandwidth:'4050m', burst:'5m', localPref:'1500', logicalSys:'FNA-R3',     ownIp:'172.18.101.41/30', neighbor:'172.18.101.42'},
   {key:'cdn',  label:'CDN',  short:'CDN',  unit:1812, bandwidth:'1010m', burst:'5m', localPref:'1500', logicalSys:'CDN-R2',     ownIp:'10.2.159.41/30',   neighbor:'10.2.159.42'},
-  {key:'bdix', label:'BDIX', short:'BDIX', unit:1811, bandwidth:'5000m', burst:'5m', localPref:'1500', logicalSys:'BDIX-R2',    ownIp:'172.16.7.41/30',   neighbor:'172.16.7.42'},
-  {key:'bcdn', label:'BCDN', short:'BCDN', unit:1813, bandwidth:'900m',  burst:'5m', localPref:'1500', logicalSys:'BCDN-R2',    ownIp:'10.100.99.41/30',  neighbor:'10.100.99.42'},
+  {key:'bdix', label:'BDIX', short:'BDIX', unit:1811, bandwidth:'5000m', burst:'5m', localPref:'1500', logicalSys:'BDIX-R2',    ownIp:'172.16.7.41/30',   neighbor:'172.16.7.42',  exportDefault:'FOR-EBGP-BDIX-CLIENTS-EXPORT'},
+  {key:'bcdn', label:'BCDN', short:'BCDN', unit:1813, bandwidth:'900m',  burst:'5m', localPref:'1500', logicalSys:'BCDN-R2',    ownIp:'10.100.99.41/30',  neighbor:'10.100.99.42', exportDefault:'BYSAN-CLIENTS-EXPORT', communityDefault:'COMMUNITY-BCDN-BGP-CLIENTS-IMPORT'},
 ];
 
 function defaultExport(gw){
+  if (gw.exportDefault) return gw.exportDefault;
   return gw.logicalSys ? `FOR-EBGP-${gw.logicalSys}-Clients-EXPORT` : 'DEFAULT-ROUTE-EXPORT';
 }
 function defaultCommunity(gw){
+  if (gw.communityDefault) return gw.communityDefault;
   return `${gw.short}-BGP-CLIENTS-IMPORT`;
 }
 
